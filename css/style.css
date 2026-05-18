@@ -1,0 +1,112 @@
+body {
+  background: #f4f6f9;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Main Container */
+
+.main-box {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Titles */
+
+.report-title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+/* Labels */
+
+label {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* Inputs */
+
+.form-control,
+.form-select {
+  border-radius: 8px;
+  min-height: 45px;
+}
+
+/* Textareas */
+
+textarea {
+  resize: none;
+}
+
+/* Buttons */
+
+.btn-save {
+  background: #dc3545;
+  border: none;
+  padding: 12px 30px;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+.btn-save:hover {
+  background: #bb2d3b;
+}
+
+/* Dashboard Cards */
+
+.dashboard-card {
+  border-radius: 12px;
+  color: white;
+  padding: 25px;
+  margin-bottom: 20px;
+}
+
+.bg-blue {
+  background: #0d6efd;
+}
+
+.bg-green {
+  background: #198754;
+}
+
+.bg-orange {
+  background: #ffc107;
+  color: black;
+}
+
+/* Patient Lookup */
+
+.lookup-box {
+  background: white;
+  border-radius: 15px;
+  padding: 40px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+}
+
+/* Table */
+
+table {
+  background: white;
+}
+
+table th {
+  background: #212529;
+  color: white;
+}
+
+/* Print */
+
+@media print {
+  .btn,
+  a {
+    display: none;
+  }
+
+  body {
+    background: white;
+  }
+}
