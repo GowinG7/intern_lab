@@ -14,6 +14,7 @@ $currentPage = basename(__FILE__);
 
     <title>BKMCH Histopathology Report System</title>
     <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/auto_record_number.js"></script>
 
 </head>
 
@@ -34,7 +35,7 @@ $currentPage = basename(__FILE__);
                     <div class="col-md-4 mb-3">
                         <label class="fw-bold">Histopathology Number</label>
                         <div class="d-flex align-items-center gap-2">
-                            <select name="histopathology_number" class="form-select"
+                            <select id="histopathology_number" name="histopathology_number" class="form-select"
                                 style="max-width: 110px; min-width: 90px;">
                                 <option value="">Select</option>
                                 <option value="A">A</option>
@@ -42,7 +43,7 @@ $currentPage = basename(__FILE__);
                             </select>
 
                             <input type="text" name="record_number" id="record_number" class="form-control"
-                                style="max-width: 290px;" value="44000">
+                                style="max-width: 290px;" placeholder="Auto-generated">
                         </div>
                     </div>
 
