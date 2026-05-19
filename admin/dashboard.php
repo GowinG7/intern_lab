@@ -53,7 +53,7 @@ $pending_reports = mysqli_num_rows($pending_query);
 
     <?php include("../shared/links.php"); ?>
 
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
 
 </head>
 
