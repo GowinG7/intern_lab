@@ -1,4 +1,9 @@
-<?php include("../shared/links.php"); ?>
+<?php
+include("auth_check.php");
+include("../shared/links.php");
+
+$currentPage = basename(__FILE__);
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,13 +18,11 @@
 </head>
 
 <body>
-
-    <!-- <div class="container">
-
-        <div class="main-box"> -->
-    <div class="container py-5">
-
-        <div class="main-box mx-auto">
+    <?php include_once("header.php"); ?>
+    
+    <div class="admin-content">
+        <div class="container">
+            <div class="main-box mx-auto">
 
             <h2 class="report-title">Histopathology Report</h2>
 
@@ -229,9 +232,8 @@
                 </div>
 
             </form>
-
+            </div>
         </div>
-
     </div>
 
 </body>

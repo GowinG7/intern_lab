@@ -3,7 +3,7 @@
 include("auth_check.php");
 include("../database/connection.php");
 
-
+$currentPage = basename(__FILE__);
 
 /* Total Reports */
 
@@ -58,103 +58,85 @@ $pending_reports = mysqli_num_rows($pending_query);
 </head>
 
 <body>
+    <?php include_once("header.php"); ?>
 
-    <div class="container mt-5">
+    <div class="admin-content">
+        <div class="container">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="mb-4">
 
-            <h2>Dashboard</h2>
+                <a href="report_form.php" class="btn btn-primary me-2">
 
-            <a href="logout.php" class="btn btn-danger">
+                    Add Report
 
-                Logout
+                </a>
 
-            </a>
+                <a href="manage_reports.php" class="btn btn-dark">
 
-        </div>
+                    Manage Reports
 
+                </a>
 
+            </div>
 
-        <div class="mb-4">
+            <div class="row">
 
-            <a href="report_form.php" class="btn btn-primary me-2">
+                <!-- Total Reports -->
 
-                Add Report
+                <div class="col-md-4 mb-3">
 
-            </a>
+                    <div class="dashboard-card bg-blue">
 
-            <a href="manage_reports.php" class="btn btn-dark">
+                        <h4>Total Reports</h4>
 
-                Manage Reports
+                        <h2>
 
-            </a>
+                            <?php echo $total_reports; ?>
 
-        </div>
+                        </h2>
 
+                    </div>
 
+                </div>
 
-        <div class="row">
+                <!-- Completed Reports -->
 
-            <!-- Total Reports -->
+                <div class="col-md-4 mb-3">
 
-            <div class="col-md-4 mb-3">
+                    <div class="dashboard-card bg-green">
 
-                <div class="dashboard-card bg-blue">
+                        <h4>Completed Reports</h4>
 
-                    <h4>Total Reports</h4>
+                        <h2>
 
-                    <h2>
+                            <?php echo $completed_reports; ?>
 
-                        <?php echo $total_reports; ?>
+                        </h2>
 
-                    </h2>
+                    </div>
+
+                </div>
+
+                <!-- Pending Reports -->
+
+                <div class="col-md-4 mb-3">
+
+                    <div class="dashboard-card bg-orange">
+
+                        <h4>Pending Reports</h4>
+
+                        <h2>
+
+                            <?php echo $pending_reports; ?>
+
+                        </h2>
+
+                    </div>
 
                 </div>
 
             </div>
-
-
-
-            <!-- Completed Reports -->
-
-            <div class="col-md-4 mb-3">
-
-                <div class="dashboard-card bg-green">
-
-                    <h4>Completed Reports</h4>
-
-                    <h2>
-
-                        <?php echo $completed_reports; ?>
-
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- Pending Reports -->
-
-            <div class="col-md-4 mb-3">
-
-                <div class="dashboard-card bg-orange">
-
-                    <h4>Pending Reports</h4>
-
-                    <h2>
-
-                        <?php echo $pending_reports; ?>
-
-                    </h2>
-
-                </div>
-
-            </div>
-
         </div>
-
     </div>
 
 </body>

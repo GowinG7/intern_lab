@@ -3,8 +3,12 @@
 include("auth_check.php");
 include("../database/connection.php");
 
-$query = mysqli_query($conn,
-"SELECT * FROM reports ORDER BY id DESC");
+$currentPage = basename(__FILE__);
+
+$query = mysqli_query(
+     $conn,
+     "SELECT * FROM reports ORDER BY id DESC"
+);
 
 ?>
 
@@ -13,89 +17,84 @@ $query = mysqli_query($conn,
 
 <head>
 
-<title>Manage Reports</title>
+     <title>Manage Reports</title>
 
-<?php include("../shared/links.php"); ?>
+     <?php include("../shared/links.php"); ?>
 
-<link rel="stylesheet" href="../css/style.css">
+     <link rel="stylesheet" href="../css/style.css">
 
 </head>
 
 <body>
+     <?php include_once("header.php"); ?>
 
-<div class="container mt-5">
+     <div class="admin-content">
+          <div class="container">
 
-<h2 class="mb-4">Manage Reports</h2>
+               <table class="table table-bordered table-striped">
 
-<table class="table table-bordered table-striped">
+                    <tr>
+                         <th>ID</th>
+                         <th>Record Number</th>
+                         <th>Patient Name</th>
+                         <th>Status</th>
+                         <th>Action</th>
+                    </tr>
 
-<tr>
+                    <?php
 
-<th>ID</th>
-<th>Record Number</th>
-<th>Patient Name</th>
-<th>Status</th>
-<th>Action</th>
+                    while ($row = mysqli_fetch_assoc($query)) {
+                         ?>
 
-</tr>
+                         <tr>
 
-<?php
+                              <td><?php echo $row['id']; ?></td>
 
-while($row = mysqli_fetch_assoc($query))
-{
-?>
+                              <td><?php echo $row['record_number']; ?></td>
 
-<tr>
+                              <td>
 
-<td><?php echo $row['id']; ?></td>
+                                   <?php
 
-<td><?php echo $row['record_number']; ?></td>
+                                   echo $row['first_name'] . " " .
+                                        $row['last_name'];
 
-<td>
+                                   ?>
 
-<?php
+                              </td>
 
-echo $row['first_name']." ".
-     $row['last_name'];
+                              <td>
 
-?>
+                                   <?php echo $row['report_status']; ?>
 
-</td>
+                              </td>
 
-<td>
+                              <td>
 
-<?php echo $row['report_status']; ?>
+                                   <a href="edit_report.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
 
-</td>
+                                        Edit
 
-<td>
+                                   </a>
 
-<a href="edit_report.php?id=<?php echo $row['id']; ?>"
-class="btn btn-warning btn-sm">
+                                   <a href="delete_report.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Delete this report?')">
 
-Edit
+                                        Delete
 
-</a>
+                                   </a>
 
-<a href="delete_report.php?id=<?php echo $row['id']; ?>"
-class="btn btn-danger btn-sm"
-onclick="return confirm('Delete this report?')">
+                              </td>
 
-Delete
+                         </tr>
 
-</a>
+                         <?php
+                    }
+                    ?>
 
-</td>
-
-</tr>
-
-<?php
-}
-?>
-
-</table>
-
-</div>
+               </table>
+          </div>
+     </div>
 
 </body>
 
