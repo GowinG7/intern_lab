@@ -13,7 +13,7 @@ session_start();
 
 </head>
 
-<body class="bg-dark">
+<body class="bg-light">
 
     <div class="container mt-5">
 

@@ -37,7 +37,7 @@
 
                             <label>Hospital Number</label>
 
-                            <input type="text" name="hospital_number" class="form-control">
+                            <input type="text" name="hospital_number" placeholder="Enter hospital number" class="form-control">
 
                         </div>
 
@@ -47,9 +47,9 @@
 
                         <div class="mb-3">
 
-                            <label>Record / Histo Number</label>
+                            <label>Histology Number</label>
 
-                            <input type="text" name="record_number" class="form-control">
+                            <input type="text" name="record_number" placeholder="A4000/2026" class="form-control">
 
                         </div>
 
