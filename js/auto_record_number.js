@@ -1,26 +1,62 @@
-/**
- * Auto Record Number Generator
- * Fetches the next record number based on selected histopathology series (A or B)
- * and current year
- */
+
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Get DOM elements
     const histopathologySelect = document.getElementById('histopathology_number');
     const recordNumberInput = document.getElementById('record_number');
     const yearInput = document.querySelector('input[name="year"]');
 
-    // Listen for changes in histopathology number dropdown
-    if (histopathologySelect) {
-        histopathologySelect.addEventListener('change', function() {
-            const selectedLetter = this.value;
-            const currentYear = yearInput.value;
+    // Validate elements exist
+    if (!histopathologySelect || !recordNumberInput || !yearInput) {
+        console.error('Auto Record Number: Required form elements not found');
+        return;
+    }
 
-            if (selectedLetter && currentYear) {
-                fetchNextRecordNumber(selectedLetter, currentYear);
-            } else {
-                recordNumberInput.value = '';
-            }
-        });
+    console.log('Auto Record Number: Initialization started', {
+        histopathology_value: histopathologySelect.value,
+        year_value: yearInput.value
+    });
+
+    // Trigger record number generation on page load
+    setTimeout(() => {
+        console.log('Auto Record Number: Triggering initial generation');
+        generateRecordNumber();
+    }, 250);
+
+    // Listen for changes in histopathology number dropdown
+    histopathologySelect.addEventListener('change', function() {
+        console.log('Auto Record Number: Dropdown changed to', this.value);
+        generateRecordNumber();
+    });
+
+    // Listen for year field changes (if user changes year)
+    yearInput.addEventListener('change', function() {
+        console.log('Auto Record Number: Year changed to', this.value);
+        generateRecordNumber();
+    });
+
+    /**
+     * Generate the record number
+     */
+    function generateRecordNumber() {
+        const selectedLetter = histopathologySelect.value;
+        const currentYear = yearInput.value;
+
+        // Skip if no letter selected (empty value)
+        if (!selectedLetter || selectedLetter === 'select' || selectedLetter === '') {
+            recordNumberInput.value = '';
+            console.log('Auto Record Number: No valid selection');
+            return;
+        }
+
+        if (!currentYear) {
+            recordNumberInput.value = '';
+            console.log('Auto Record Number: No year available');
+            return;
+        }
+
+        console.log('Auto Record Number: Fetching for', { letter: selectedLetter, year: currentYear });
+        fetchNextRecordNumber(selectedLetter, currentYear);
     }
 
     /**
@@ -33,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         recordNumberInput.value = 'Loading...';
         recordNumberInput.style.color = '#6c757d';
 
-        fetch('../admin/get_next_record_number.php', {
+        fetch('report_form.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -51,6 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 recordNumberInput.value = '';
                 console.error('Error:', data.message);
+                recordNumberInput.style.color = '#dc3545';
             }
         })
         .catch(error => {

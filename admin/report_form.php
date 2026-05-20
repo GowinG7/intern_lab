@@ -1,5 +1,147 @@
 <?php
 include("auth_check.php");
+
+// ========== HANDLE AJAX REQUEST FOR RECORD NUMBER ==========
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Set JSON header immediately for any POST request
+    header('Content-Type: application/json');
+    
+    $input = json_decode(file_get_contents('php://input'), true);
+    
+    // Check if it's a valid AJAX request with required fields
+    if (!is_array($input) || !isset($input['histopathology_number']) || !isset($input['year'])) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Invalid or missing parameters',
+            'debug' => [
+                'input_type' => gettype($input),
+                'has_histopathology' => isset($input['histopathology_number']) ?? false,
+                'has_year' => isset($input['year']) ?? false
+            ]
+        ]);
+        exit;
+    }
+    
+    include("../database/connection.php");
+    
+    $histopathology_number = $input['histopathology_number'];
+    $year = $input['year'];
+    
+    // Validate inputs
+    if (!preg_match('/^[A-Z]$/', $histopathology_number)) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Invalid histopathology number'
+        ]);
+        exit;
+    }
+    
+    if (!preg_match('/^\d{4}$/', $year)) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Invalid year'
+        ]);
+        exit;
+    }
+    
+    // Find the max NUMERIC value for records of this series (e.g., A4000, A4001)
+    // Uses SUBSTRING to extract the numeric part after the letter
+    $stmt = mysqli_prepare($conn, 
+        "SELECT MAX(CAST(SUBSTRING(record_number, 2) AS UNSIGNED)) as max_numeric_value 
+         FROM reports 
+         WHERE histopathology_number = ? 
+         AND report_year = ?
+         AND record_number LIKE CONCAT(?, '%')"
+    );
+    
+    if (!$stmt) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Database error: ' . mysqli_error($conn)
+        ]);
+        exit;
+    }
+    
+    // Bind parameters (histopathology_number appears twice - for filter and for LIKE pattern)
+    $like_pattern = $histopathology_number . '%';
+    mysqli_stmt_bind_param($stmt, "sss", $histopathology_number, $year, $like_pattern);
+    
+    // Execute query
+    if (!mysqli_stmt_execute($stmt)) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Query execution error: ' . mysqli_error($conn)
+        ]);
+        mysqli_stmt_close($stmt);
+        exit;
+    }
+    
+    // Get result
+    $result = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($result);
+    $max_numeric_value = $row['max_numeric_value'];
+    mysqli_stmt_close($stmt);
+    
+    // Start from 4000 if no records exist for this series, otherwise increment
+    $next_numeric = $max_numeric_value ? ($max_numeric_value + 1) : 4000;
+    
+    // Format the record number: prepend the letter (A4000, B4001, etc.)
+    $formatted_record_number = $histopathology_number . $next_numeric;
+    
+    // Check if this formatted number already exists (safety check for uniqueness)
+    $stmt_check = mysqli_prepare($conn, 
+        "SELECT COUNT(*) as count FROM reports WHERE record_number = ?"
+    );
+    
+    if (!$stmt_check) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Database error checking availability: ' . mysqli_error($conn)
+        ]);
+        exit;
+    }
+    
+    $attempts = 0;
+    $max_attempts = 10000; // Prevent infinite loops
+    
+    // Safety loop: increment if collision detected (shouldn't happen with proper formatting)
+    while ($attempts < $max_attempts) {
+        mysqli_stmt_bind_param($stmt_check, "s", $formatted_record_number);
+        mysqli_stmt_execute($stmt_check);
+        $check_result = mysqli_stmt_get_result($stmt_check);
+        $check_row = mysqli_fetch_assoc($check_result);
+        
+        // If this number doesn't exist globally, we can use it
+        if ($check_row['count'] == 0) {
+            break;
+        }
+        
+        // Otherwise, try the next number
+        $next_numeric++;
+        $formatted_record_number = $histopathology_number . $next_numeric;
+        $attempts++;
+    }
+    
+    mysqli_stmt_close($stmt_check);
+    
+    if ($attempts >= $max_attempts) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Unable to generate a unique record number. Database limit reached.'
+        ]);
+        exit;
+    }
+    
+    echo json_encode([
+        'success' => true,
+        'next_record_number' => $formatted_record_number,
+        'message' => 'Record number generated successfully'
+    ]);
+    exit;
+}
+// ========== END AJAX HANDLER ==========
+
+// Include links for HTML page display only
 include("../shared/links.php");
 
 $currentPage = basename(__FILE__);
@@ -37,8 +179,7 @@ $currentPage = basename(__FILE__);
                         <div class="d-flex align-items-center gap-2">
                             <select id="histopathology_number" name="histopathology_number" class="form-select"
                                 style="max-width: 110px; min-width: 90px;">
-                                <option value="">Select</option>
-                                <option value="A">A</option>
+                                <option value="A" selected>A</option>
                                 <option value="B">B</option>
                             </select>
 

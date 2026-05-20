@@ -241,7 +241,7 @@ $pending_reports = mysqli_num_rows($pending_query);
     <div class="admin-content">
         <div class="container">
 
-            <div class="mb-4">
+            <!-- <div class="mb-4">
 
                 <a href="report_form.php" class="btn btn-primary me-2">
 
@@ -255,7 +255,7 @@ $pending_reports = mysqli_num_rows($pending_query);
 
                 </a>
 
-            </div>
+            </div> -->
 
             <!-- Filter Analytics Section -->
             <div class="filter-section">
