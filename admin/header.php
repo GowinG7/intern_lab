@@ -201,7 +201,7 @@ include_once("../shared/links.php");
         <div class="d-flex align-items-center gap-2">
             <!-- Welcome message - now visible on all screens -->
             <span class="admin-welcome">
-                Welcome
+                Welcome <strong><?php echo isset($_SESSION['admin_username']) ? htmlspecialchars($_SESSION['admin_username']) : 'Admin'; ?></strong>
             </span>
 
             <!-- Logout always visible -->
