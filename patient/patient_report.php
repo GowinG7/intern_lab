@@ -2,27 +2,52 @@
 
 include("../database/connection.php");
 
-$hospital_number = $_GET['hospital_number'];
-$record_number = $_GET['record_number'];
+$hospital_number = isset($_GET['hospital_number']) ? trim($_GET['hospital_number']) : '';
+$record_number = isset($_GET['record_number']) ? trim($_GET['record_number']) : '';
+$histopathology_number = isset($_GET['histopathology_number']) ? trim($_GET['histopathology_number']) : '';
+$report_year = isset($_GET['report_year']) ? trim($_GET['report_year']) : '';
 
-$query = mysqli_query(
-    $conn,
+// Build the query with proper WHERE conditions
+$where_conditions = array();
+$params = array();
+$types = '';
 
-    "SELECT * FROM reports
+// Search by hospital number
+if (!empty($hospital_number)) {
+    $where_conditions[] = "hospital_number = ?";
+    $params[] = $hospital_number;
+    $types .= 's';
+}
 
-WHERE
+// If searching by histopathology (combination of letter, number, year)
+// Reconstruct the full record_number from letter + number (e.g., "A" + "4000" = "A4000")
+if (!empty($histopathology_number) && !empty($record_number) && !empty($report_year)) {
+    $full_record_number = $histopathology_number . $record_number;
+    $where_conditions[] = "(record_number = ? AND report_year = ?)";
+    $params[] = $full_record_number;
+    $params[] = $report_year;
+    $types .= 'si';
+}
 
-(
-hospital_number='$hospital_number'
-
-OR
-
-record_number='$record_number'
-)
-
-AND report_status='Completed'
-"
-);
+// Ensure we have at least one search criterion
+if (empty($where_conditions)) {
+    $query = null;
+} else {
+    $where_clause = '(' . implode(' OR ', $where_conditions) . ') AND report_status = "Completed"';
+    
+    $sql = "SELECT * FROM reports WHERE " . $where_clause;
+    $stmt = $conn->prepare($sql);
+    
+    if ($stmt) {
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+        $stmt->execute();
+        $query = $stmt->get_result();
+    } else {
+        $query = null;
+    }
+}
 
 ?>
 
@@ -48,8 +73,18 @@ AND report_status='Completed'
 
         <?php
 
-        if (mysqli_num_rows($query) > 0) {
-            $row = mysqli_fetch_assoc($query);
+        if ($query === null) {
+            ?>
+
+            <div class="alert alert-warning">
+
+                Please provide a search criterion.
+
+            </div>
+
+            <?php
+        } elseif ($query->num_rows > 0) {
+            $row = $query->fetch_assoc();
 
             ?>
 

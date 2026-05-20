@@ -44,14 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
-    // Find the max NUMERIC value for records of this series (e.g., A4000, A4001)
-    // Uses SUBSTRING to extract the numeric part after the letter
+    // Find the max NUMERIC value for records of this series and year
+    // Query the reports table filtered by histopathology_number (A or B) and year
     $stmt = mysqli_prepare($conn, 
-        "SELECT MAX(CAST(SUBSTRING(record_number, 2) AS UNSIGNED)) as max_numeric_value 
+        "SELECT MAX(CAST(record_number AS UNSIGNED)) as max_numeric_value 
          FROM reports 
          WHERE histopathology_number = ? 
-         AND report_year = ?
-         AND record_number LIKE CONCAT(?, '%')"
+         AND report_year = ?"
     );
     
     if (!$stmt) {
@@ -62,9 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
-    // Bind parameters (histopathology_number appears twice - for filter and for LIKE pattern)
-    $like_pattern = $histopathology_number . '%';
-    mysqli_stmt_bind_param($stmt, "sss", $histopathology_number, $year, $like_pattern);
+    // Bind parameters - filter by the specific series (A or B) and year
+    mysqli_stmt_bind_param($stmt, "ss", $histopathology_number, $year);
     
     // Execute query
     if (!mysqli_stmt_execute($stmt)) {
