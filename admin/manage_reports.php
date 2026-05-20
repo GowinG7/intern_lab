@@ -37,6 +37,8 @@ $query = mysqli_query(
                          <th>ID</th>
                          <th>Record Number</th>
                          <th>Patient Name</th>
+                         <th>Histology Number</th>
+                         <th>Year</th>
                          <th>Status</th>
                          <th>Action</th>
                     </tr>
