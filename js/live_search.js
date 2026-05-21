@@ -11,15 +11,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 const cells = row.querySelectorAll('td');
                 let rowMatch = false;
 
-                // Search in: Patient Name (index 3), Record Number (index 1), Hospital Number (index 4)
+                // Search in: Patient Name (index 3), Record Number (index 1), Hospital Number (index 4), Year (index 2)
                 const patientName = cells[3]?.textContent.toLowerCase() || '';
                 const recordNumber = cells[1]?.textContent.toLowerCase() || '';
                 const hospitalNumber = cells[4]?.textContent.toLowerCase() || '';
+                const year = cells[2]?.textContent.toLowerCase() || '';
 
                 if (searchTerm === '' || 
                     patientName.includes(searchTerm) || 
                     recordNumber.includes(searchTerm) || 
-                    hospitalNumber.includes(searchTerm)) {
+                    hospitalNumber.includes(searchTerm) ||
+                    year.includes(searchTerm)) {
                     row.style.display = '';
                     rowMatch = true;
                     visibleCount++;

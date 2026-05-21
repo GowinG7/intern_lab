@@ -14,7 +14,8 @@ if (!empty($searchTerm)) {
      $whereClause = "(
           CONCAT(first_name, ' ', last_name) LIKE '%$searchTerm%' OR 
           record_number LIKE '%$searchTerm%' OR 
-          hospital_number LIKE '%$searchTerm%'
+          hospital_number LIKE '%$searchTerm%' OR
+          report_year LIKE '%$searchTerm%'
      )";
 }
 
@@ -125,7 +126,7 @@ $query = mysqli_query(
                               type="text" 
                               id="liveSearchInput"
                               class="form-control" 
-                              placeholder="🔍 Search by patient name, record number, or hospital number..." 
+                              placeholder="🔍 Search by year, patient name, record number, or hospital number..." 
                               value="<?php echo htmlspecialchars($searchTerm); ?>">
                          <button type="submit" class="btn btn-primary">Search</button>
                          <?php if (!empty($searchTerm)): ?>
