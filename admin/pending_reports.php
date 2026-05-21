@@ -48,13 +48,13 @@ $query = mysqli_query(
                     </tr>
 
                     <?php
-
+                         $counter = 1;
                     while ($row = mysqli_fetch_assoc($query)) {
                          ?>
 
                          <tr>
 
-                              <td><?php echo $row['id']; ?></td>
+                              <td></td>
 
                               <td><?php echo $row['record_number']; ?></td>
 
@@ -80,7 +80,13 @@ $query = mysqli_query(
 
                               <td>
 
-                                   <a href="edit_report.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
+                                   <a href="view_report_pdf.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
+
+                                        View
+
+                                   </a>
+
+                                   <a href="edit_report.php?id=<?php echo $row['id']; ?>" class="btn btn-info btn-sm">
 
                                         Edit
 

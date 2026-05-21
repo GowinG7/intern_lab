@@ -80,7 +80,7 @@ $query = mysqli_query(
 
                               <td>
 
-                                   <a href="edit_report.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
+                                   <a href="view_report_pdf.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
 
                                         View
 

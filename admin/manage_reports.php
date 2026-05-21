@@ -36,34 +36,46 @@ $query = mysqli_query(
                     <tr>
                          <th>ID</th>
                          <th>Record Number</th>
-                         <th>Patient Name</th>
-                         <th>Histology Number</th>
                          <th>Year</th>
+                         <th>Patient Name</th>
+                         
+                         <th>Hospital Number</th>
+
                          <th>Status</th>
                          <th>Action</th>
                     </tr>
 
                     <?php
 
+                    $counter = 1;
                     while ($row = mysqli_fetch_assoc($query)) {
                          ?>
 
                          <tr>
 
-                              <td><?php echo $row['id']; ?></td>
+                              <td><?php echo $counter; ?></td>
 
                               <td><?php echo $row['record_number']; ?></td>
+                              <td>
+                                   <?php
+                                   echo $row['report_year']
+                                        ?>
+                              </td>
 
                               <td>
-
                                    <?php
-
                                    echo $row['first_name'] . " " .
                                         $row['last_name'];
-
                                    ?>
-
                               </td>
+
+
+                              <td>
+                                   <?php
+                                   echo $row['hospital_number']
+                                        ?>
+                              </td>
+
 
                               <td>
 
@@ -73,7 +85,13 @@ $query = mysqli_query(
 
                               <td>
 
-                                   <a href="edit_report.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
+                                   <a href="view_report_pdf.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
+
+                                        View
+
+                                   </a>
+
+                                   <a href="edit_report.php?id=<?php echo $row['id']; ?>" class="btn btn-info btn-sm">
 
                                         Edit
 
@@ -91,6 +109,7 @@ $query = mysqli_query(
                          </tr>
 
                          <?php
+                         $counter++;
                     }
                     ?>
 

@@ -256,17 +256,9 @@ $query = mysqli_query(
 
                                    <td>
 
-                                        <a href="edit_report.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
+                                        <a href="view_report_pdf.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
 
-                                             View
-
-                                        </a>
-
-                                        <a href="delete_report.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm"
-
-                                             onclick="return confirm('Delete this report?')">
-
-                                             Delete
+                                             View Report
 
                                         </a>
 
