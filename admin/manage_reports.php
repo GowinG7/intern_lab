@@ -7,7 +7,7 @@ $currentPage = basename(__FILE__);
 
 $query = mysqli_query(
      $conn,
-     "SELECT * FROM reports ORDER BY id DESC"
+     "SELECT * FROM reports ORDER BY report_year ASC, CAST(SUBSTRING(record_number, 2) AS UNSIGNED) ASC"
 );
 
 ?>

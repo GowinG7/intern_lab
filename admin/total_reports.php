@@ -7,7 +7,7 @@ $currentPage = basename(__FILE__);
 
 $query = mysqli_query(
      $conn,
-     "SELECT `id`, `histopathology_number`, `record_number`, `hospital_number`, `report_year`, `first_name`, `middle_name`, `last_name`, `gender`, `age`, `date_receipt`, `date_dispatch`, `referring_physician`, `clinical_features`, `biopsy_site`, `procedure_performed`, `gross_description`, `microscopic_description`, `diagnosis`, `pathologist`, `consultant_pathologist`, `report_status`, `comment`, `created_at` FROM `reports` ORDER BY id DESC"
+     "SELECT `id`, `histopathology_number`, `record_number`, `hospital_number`, `report_year`, `first_name`, `middle_name`, `last_name`, `gender`, `age`, `date_receipt`, `date_dispatch`, `referring_physician`, `clinical_features`, `biopsy_site`, `procedure_performed`, `gross_description`, `microscopic_description`, `diagnosis`, `pathologist`, `consultant_pathologist`, `report_status`, `comment`, `created_at` FROM `reports` ORDER BY report_year ASC, CAST(SUBSTRING(record_number, 2) AS UNSIGNED) ASC"
 );
 
 ?>
@@ -193,21 +193,17 @@ $query = mysqli_query(
 
                          <tr>
                               <th>ID</th>
-                              <th>Record #</th>
-                              <th>Hospital #</th>
+                              <th>Record Number</th>
+                              <th>Year</th>
                               <th>Patient Name</th>
-                              <th>Gender</th>
-                              <th>Age</th>
-                              <th>Date Receipt</th>
-                              <th>Biopsy Site</th>
-                              <th>Diagnosis</th>
+                              <th>Hospital Number</th>
                               <th>Status</th>
-                              <th>Pathologist</th>
                               <th>Action</th>
                          </tr>
 
                          <?php
 
+                         $counter = 1;
                          while ($row = mysqli_fetch_assoc($query)) {
 
                               $statusClass = ($row['report_status'] === 'Completed') ? 'status-completed' : 'status-pending';
@@ -216,31 +212,15 @@ $query = mysqli_query(
 
                               <tr>
 
-                                   <td><?php echo $row['id']; ?></td>
+                                   <td><?php echo $counter; ?></td>
 
                                    <td><?php echo $row['record_number']; ?></td>
 
+                                   <td><?php echo $row['report_year']; ?></td>
+
+                                   <td><?php echo $row['first_name'] . " " . $row['last_name']; ?></td>
+
                                    <td><?php echo $row['hospital_number']; ?></td>
-
-                                   <td>
-
-                                        <?php
-
-                                        echo $row['first_name'] . " " . $row['middle_name'] . " " . $row['last_name'];
-
-                                        ?>
-
-                                   </td>
-
-                                   <td><?php echo $row['gender']; ?></td>
-
-                                   <td><?php echo $row['age']; ?></td>
-
-                                   <td><?php echo $row['date_receipt']; ?></td>
-
-                                   <td><?php echo $row['biopsy_site']; ?></td>
-
-                                   <td><?php echo substr($row['diagnosis'], 0, 50) . "..."; ?></td>
 
                                    <td>
 
@@ -252,13 +232,11 @@ $query = mysqli_query(
 
                                    </td>
 
-                                   <td><?php echo $row['pathologist']; ?></td>
-
                                    <td>
 
                                         <a href="view_report_pdf.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">
 
-                                             View Report
+                                             View
 
                                         </a>
 
@@ -267,6 +245,7 @@ $query = mysqli_query(
                               </tr>
 
                               <?php
+                              $counter++;
                          }
                          ?>
 
