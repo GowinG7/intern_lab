@@ -128,7 +128,8 @@
 
                             <label for="hospital_number">Hospital Number</label>
 
-                            <input type="text" id="hospital_number" name="hospital_number" placeholder="Enter hospital number" class="form-control">
+                            <input type="text" id="hospital_number" name="hospital_number"
+                                placeholder="Enter hospital number" class="form-control">
 
                             <div class="format-hint">Example: 749, 123, etc.</div>
 
@@ -140,7 +141,8 @@
 
                             <label for="histopathology_full">Histopathology Number</label>
 
-                            <input type="text" id="histopathology_full" name="histopathology_full" placeholder="A4000/2026" class="form-control">
+                            <input type="text" id="histopathology_full" name="histopathology_full"
+                                placeholder="A4000/2026" class="form-control">
 
                             <div class="format-hint">Example: A4000/2026 (Letter + Number + Year)</div>
 
@@ -175,7 +177,7 @@
         const hospitalNumberInput = document.getElementById('hospital_number');
         const errorMessage = document.getElementById('errorMessage');
 
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
 
             const hospitalNumber = hospitalNumberInput.value.trim();
@@ -215,7 +217,7 @@
         });
 
         // Clear error when user starts typing
-        histopathologyFullInput.addEventListener('input', function() {
+        histopathologyFullInput.addEventListener('input', function () {
             errorMessage.style.display = 'none';
         });
     </script>

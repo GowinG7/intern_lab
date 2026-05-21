@@ -34,10 +34,10 @@ if (empty($where_conditions)) {
     $query = null;
 } else {
     $where_clause = '(' . implode(' OR ', $where_conditions) . ') AND report_status = "Completed"';
-    
+
     $sql = "SELECT * FROM reports WHERE " . $where_clause;
     $stmt = $conn->prepare($sql);
-    
+
     if ($stmt) {
         if (!empty($params)) {
             $stmt->bind_param($types, ...$params);

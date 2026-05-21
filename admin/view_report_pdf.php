@@ -167,10 +167,10 @@ $row = mysqli_fetch_assoc($query);
 
         .sig-line {
             border-bottom: 1px dashed #000;
-           
+
             min-width: 25%;
             min-height: 40px;
-           
+
         }
 
         .pathologist-section {
@@ -580,7 +580,8 @@ $row = mysqli_fetch_assoc($query);
                 </div>
                 <div class="top-row">
                     <span class="top-label">Patient Name:</span>
-                    <span class="top-value"><?php echo trim($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?></span>
+                    <span
+                        class="top-value"><?php echo trim($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?></span>
                 </div>
                 <div class="top-row">
                     <span class="top-label">Gender:</span>
@@ -679,16 +680,20 @@ $row = mysqli_fetch_assoc($query);
 
         <!-- Comments (if exists) - Before Note -->
         <?php if (!empty($row['comment'])): ?>
-        <div class="comments-section">
-            <div class="field-label">Comments:</div>
-            <div class="field-content"><?php echo nl2br(htmlspecialchars($row['comment'])); ?></div>
-        </div>
+            <div class="comments-section">
+                <div class="field-label">Comments:</div>
+                <div class="field-content"><?php echo nl2br(htmlspecialchars($row['comment'])); ?></div>
+            </div>
         <?php endif; ?>
 
         <!-- Note Section - At Bottom -->
         <div class="note-section">
             <div class="note-title">NOTE:</div>
-            <div class="note-text">The opinion/diagnosis is based on the tissue submitted and may not represent entire lesion (depends on the nature of sampling and provided information) and should not be interpreted in isolation. A correlation with clinical, radiological and other laboratory parameters is strongly recommended before any therapeutic intervention. This report is made only for the welfare of the patient, not for any legal purpose.</div>
+            <div class="note-text">The opinion/diagnosis is based on the tissue submitted and may not represent entire
+                lesion (depends on the nature of sampling and provided information) and should not be interpreted in
+                isolation. A correlation with clinical, radiological and other laboratory parameters is strongly
+                recommended before any therapeutic intervention. This report is made only for the welfare of the
+                patient, not for any legal purpose.</div>
         </div>
 
     </div>
