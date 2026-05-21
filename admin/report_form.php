@@ -45,9 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     // Find the max NUMERIC value for records of this series and year
-    // Query the reports table filtered by histopathology_number (A or B) and year
+    // Query counts ALL reports (Pending, Completed, etc.) to prevent duplicate record numbers
+    // Uses SUBSTRING to properly extract numeric part (A4000 -> 4000)
     $stmt = mysqli_prepare($conn, 
-        "SELECT MAX(CAST(record_number AS UNSIGNED)) as max_numeric_value 
+        "SELECT MAX(CAST(SUBSTRING(record_number, 2) AS UNSIGNED)) as max_numeric_value 
          FROM reports 
          WHERE histopathology_number = ? 
          AND report_year = ?"
