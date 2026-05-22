@@ -552,124 +552,126 @@ if (!empty($hospital_number)) {
                             <button class="btn btn-back" onclick="window.location.href='patient_lookup.php'">← Go Back</button>
                         </div>
                     <?php else: ?>
-                    <div class="top-section">
-                        <div class="top-col">
-                            <div class="top-row">
-                                <span class="top-label">HistoPathology Number:</span>
-                                <span class="top-value"><?php echo htmlspecialchars($report_full['record_number']); ?></span>
+                        <div class="top-section">
+                            <div class="top-col">
+                                <div class="top-row">
+                                    <span class="top-label">HistoPathology Number:</span>
+                                    <span class="top-value"><?php echo htmlspecialchars($report_full['record_number']); ?></span>
+                                </div>
+                                <div class="top-row">
+                                    <span class="top-label">Patient Name:</span>
+                                    <span
+                                        class="top-value"><?php echo htmlspecialchars(trim($report_full['first_name'] . ' ' . $report_full['middle_name'] . ' ' . $report_full['last_name'])); ?></span>
+                                </div>
+                                <div class="top-row">
+                                    <span class="top-label">Gender:</span>
+                                    <span class="top-value"><?php echo htmlspecialchars($report_full['gender']); ?></span>
+                                </div>
+                                <div class="top-row">
+                                    <span class="top-label">Referring Physician:</span>
+                                    <span
+                                        class="top-value"><?php echo htmlspecialchars($report_full['referring_physician']); ?></span>
+                                </div>
                             </div>
-                            <div class="top-row">
-                                <span class="top-label">Patient Name:</span>
-                                <span class="top-value"><?php echo htmlspecialchars(trim($report_full['first_name'] . ' ' . $report_full['middle_name'] . ' ' . $report_full['last_name'])); ?></span>
+                            <div class="top-col">
+                                <div class="top-row">
+                                    <span class="top-label">Hospital No.:</span>
+                                    <span class="top-value"><?php echo htmlspecialchars($report_full['hospital_number']); ?></span>
+                                </div>
+                                <div class="top-row">
+                                    <span class="top-label">Age:</span>
+                                    <span class="top-value"><?php echo htmlspecialchars($report_full['age']); ?></span>
+                                </div>
+                                <div class="top-row">
+                                    <span class="top-label">Date of Receipt (BS):</span>
+                                    <span class="top-value"><?php echo htmlspecialchars($report_full['date_receipt']); ?></span>
+                                </div>
+                                <div class="top-row">
+                                    <span class="top-label">Date of Dispatch (BS):</span>
+                                    <span class="top-value"><?php echo htmlspecialchars($report_full['date_dispatch']); ?></span>
+                                </div>
                             </div>
-                            <div class="top-row">
-                                <span class="top-label">Gender:</span>
-                                <span class="top-value"><?php echo htmlspecialchars($report_full['gender']); ?></span>
+                            <div class="top-col">
+                                <div><span class="top-label">Year:</span>
+                                    <span><?php echo htmlspecialchars($report_full['report_year']); ?></span>
+                                </div>
                             </div>
-                            <div class="top-row">
-                                <span class="top-label">Referring Physician:</span>
-                                <span class="top-value"><?php echo htmlspecialchars($report_full['referring_physician']); ?></span>
-                            </div>
-                        </div>
-                        <div class="top-col">
-                            <div class="top-row">
-                                <span class="top-label">Hospital No.:</span>
-                                <span class="top-value"><?php echo htmlspecialchars($report_full['hospital_number']); ?></span>
-                            </div>
-                            <div class="top-row">
-                                <span class="top-label">Age:</span>
-                                <span class="top-value"><?php echo htmlspecialchars($report_full['age']); ?></span>
-                            </div>
-                            <div class="top-row">
-                                <span class="top-label">Date of Receipt (BS):</span>
-                                <span class="top-value"><?php echo htmlspecialchars($report_full['date_receipt']); ?></span>
-                            </div>
-                            <div class="top-row">
-                                <span class="top-label">Date of Dispatch (BS):</span>
-                                <span class="top-value"><?php echo htmlspecialchars($report_full['date_dispatch']); ?></span>
-                            </div>
-                        </div>
-                        <div class="top-col">
-                            <div><span class="top-label">Year:</span>
-                                <span><?php echo htmlspecialchars($report_full['report_year']); ?></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="divider"></div>
-
-                    <div class="field-label">Clinical Features:</div>
-                    <div class="field-content"><?php echo nl2br(htmlspecialchars($report_full['clinical_features'])); ?></div>
-
-                    <div class="two-col-section" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                        <div>
-                            <div class="field-label">Biopsy Site:</div>
-                            <div class="field-content"><?php echo nl2br(htmlspecialchars($report_full['biopsy_site'])); ?></div>
-                        </div>
-                        <div>
-                            <div class="field-label">Procedure Performed:</div>
-                            <div class="field-content">
-                                <?php echo nl2br(htmlspecialchars($report_full['procedure_performed'])); ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field-label">Gross Description:</div>
-                    <div class="field-content"><?php echo nl2br(htmlspecialchars($report_full['gross_description'])); ?></div>
-
-                    <div class="two-col-section">
-                        <div class="two-col-field">
-                            <div class="field-label">Microscopic Description:</div>
-                            <div class="field-content">
-                                <?php echo nl2br(htmlspecialchars($report_full['microscopic_description'])); ?>
-                            </div>
-                        </div>
-                        <div class="two-col-field">
-                            <div class="field-label">Diagnosis:</div>
-                            <div class="field-content"><?php echo nl2br(htmlspecialchars($report_full['diagnosis'])); ?></div>
-                        </div>
-                    </div>
-
-                    <!-- Signature Section -->
-                    <div class="signature-section">
-                        <div class="sig-container">
-                            <div class="sig-label">Signature:</div>
-                            <div class="sig-line"></div>
                         </div>
 
-                        <div class="pathologist-section">
-                            <span class="path-label">Pathologist:</span>
-                            <span class="path-value"><?php echo htmlspecialchars($report_full['pathologist']); ?></span>
+                        <div class="divider"></div>
+
+                        <div class="field-label">Clinical Features:</div>
+                        <div class="field-content"><?php echo nl2br(htmlspecialchars($report_full['clinical_features'])); ?></div>
+
+                        <div class="two-col-section" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                            <div>
+                                <div class="field-label">Biopsy Site:</div>
+                                <div class="field-content"><?php echo nl2br(htmlspecialchars($report_full['biopsy_site'])); ?></div>
+                            </div>
+                            <div>
+                                <div class="field-label">Procedure Performed:</div>
+                                <div class="field-content">
+                                    <?php echo nl2br(htmlspecialchars($report_full['procedure_performed'])); ?>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="pathologist-section">
-                            <span class="path-label">Consultant Pathologist:</span>
-                            <span
-                                class="path-value"><?php echo htmlspecialchars($report_full['consultant_pathologist']); ?></span>
-                        </div>
-                    </div>
+                        <div class="field-label">Gross Description:</div>
+                        <div class="field-content"><?php echo nl2br(htmlspecialchars($report_full['gross_description'])); ?></div>
 
-                    <!-- Comments (if exists) -->
-                    <?php if (!empty($report_full['comment'])): ?>
-                        <div class="comments-section">
-                            <div class="field-label">Comments:</div>
-                            <div class="field-content"><?php echo nl2br(htmlspecialchars($report_full['comment'])); ?></div>
+                        <div class="two-col-section">
+                            <div class="two-col-field">
+                                <div class="field-label">Microscopic Description:</div>
+                                <div class="field-content">
+                                    <?php echo nl2br(htmlspecialchars($report_full['microscopic_description'])); ?>
+                                </div>
+                            </div>
+                            <div class="two-col-field">
+                                <div class="field-label">Diagnosis:</div>
+                                <div class="field-content"><?php echo nl2br(htmlspecialchars($report_full['diagnosis'])); ?></div>
+                            </div>
                         </div>
-                    <?php endif; ?>
 
-                    <!-- Note Section -->
-                    <div class="note-section">
-                        <div class="note-title">NOTE:</div>
-                        <div class="note-text">The opinion/diagnosis is based on the tissue submitted and may not represent
-                            entire lesion (depends on the nature of sampling and provided information) and should not be
-                            interpreted in isolation. A correlation with clinical, radiological and other laboratory parameters
-                            is strongly recommended before any therapeutic intervention. This report is made only for the
-                            welfare of the patient, not for any legal purpose.</div>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="btn btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
-                        <button class="btn btn-back" onclick="window.location.href='patient_lookup.php'">← Go Back</button>
-                    </div>
+                        <!-- Signature Section -->
+                        <div class="signature-section">
+                            <div class="sig-container">
+                                <div class="sig-label">Signature:</div>
+                                <div class="sig-line"></div>
+                            </div>
+
+                            <div class="pathologist-section">
+                                <span class="path-label">Pathologist:</span>
+                                <span class="path-value"><?php echo htmlspecialchars($report_full['pathologist']); ?></span>
+                            </div>
+
+                            <div class="pathologist-section">
+                                <span class="path-label">Consultant Pathologist:</span>
+                                <span
+                                    class="path-value"><?php echo htmlspecialchars($report_full['consultant_pathologist']); ?></span>
+                            </div>
+                        </div>
+
+                        <!-- Comments (if exists) -->
+                        <?php if (!empty($report_full['comment'])): ?>
+                            <div class="comments-section">
+                                <div class="field-label">Comments:</div>
+                                <div class="field-content"><?php echo nl2br(htmlspecialchars($report_full['comment'])); ?></div>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Note Section -->
+                        <div class="note-section">
+                            <div class="note-title">NOTE:</div>
+                            <div class="note-text">The opinion/diagnosis is based on the tissue submitted and may not represent
+                                entire lesion (depends on the nature of sampling and provided information) and should not be
+                                interpreted in isolation. A correlation with clinical, radiological and other laboratory parameters
+                                is strongly recommended before any therapeutic intervention. This report is made only for the
+                                welfare of the patient, not for any legal purpose.</div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+                            <button class="btn btn-back" onclick="window.location.href='patient_lookup.php'">← Go Back</button>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>

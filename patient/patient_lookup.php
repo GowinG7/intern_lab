@@ -34,19 +34,42 @@ if ($report_id) {
     <style>
         <?php if (!$report_data): ?>
         /* SEARCH FORM STYLES */
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            position: relative;
+            font-family: Arial, Helvetica, sans-serif;
+            background: url('images/bkmch-bg.jpg') center center / cover no-repeat fixed;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.55);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+        
         .lookup-box {
-            background: white;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(6px);
             border-radius: 15px;
             padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
         }
 
         .lookup-box h2 {
-            color: #1e293b;
+            color: #0f8a22;
             font-weight: 700;
             margin-bottom: 30px;
             padding-bottom: 15px;
-            border-bottom: 3px solid #0d6efd;
+            border-bottom: 3px solid #ecf0f7;
         }
 
         .lookup-box label {
@@ -64,7 +87,7 @@ if ($report_id) {
         }
 
         .lookup-box .form-control:focus {
-            border-color: #0d6efd;
+            border-color: #139745;
             box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
         }
 
@@ -74,6 +97,8 @@ if ($report_id) {
             color: #6c757d;
             font-weight: 600;
             position: relative;
+            z-index: 1;
+            padding: 0 10px;
         }
 
         .divider::before,
@@ -81,21 +106,18 @@ if ($report_id) {
             content: '';
             position: absolute;
             top: 50%;
-            width: 48%;
+            transform: translateY(-50%);
+            width: 45%;
             height: 1px;
             background-color: #dee2e6;
+            z-index: 0;
         }
 
-        .divider::before {
-            left: 0;
-        }
-
-        .divider::after {
-            right: 0;
-        }
+        .divider::before { left: 0; }
+        .divider::after  { right: 0; }
 
         .btn-danger {
-            background-color: #dc3545;
+            background-color: #25c457;
             border: none;
             padding: 12px;
             font-weight: 600;
@@ -104,9 +126,19 @@ if ($report_id) {
         }
 
         .btn-danger:hover {
-            background-color: #bb2d3b;
+            background-color: #428d40e8;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+            box-shadow: 0 4px 12px rgba(29, 116, 55, 0.4);
+        }
+
+        .btn-danger:focus,
+        .btn-danger:active,
+        .btn-danger.focus,
+        .btn-danger:not(:disabled):not(.disabled).active {
+            background-color: #25c457;
+            border-color: #25c457;
+            color: #fff;
+            box-shadow: none;
         }
 
         .error-message {
@@ -194,7 +226,7 @@ if ($report_id) {
         /* Divider line */
         .divider {
             border-top: 2px solid #000;
-            margin: 10px 0;
+            margin: 10px 0px;
         }
 
         /* Fields Section */
@@ -659,6 +691,8 @@ if ($report_id) {
             }
         }
         <?php endif; ?>
+
+        
     </style>
 
 </head>
@@ -675,8 +709,8 @@ if ($report_id) {
 
                 <div class="lookup-box">
 
-                    <h2 class="text-center mb-4">
-                        Find Your Report
+                    <h2 class="text-center  mb-4">
+                        BPKMCH Histopathology Report
                     </h2>
 
                     <form id="lookupForm" action="patient_view.php" method="POST">
@@ -688,7 +722,7 @@ if ($report_id) {
                             <input type="text" id="hospital_number" name="hospital_number"
                                 placeholder="Enter hospital number" class="form-control">
 
-                            <div class="format-hint">Example: 749, 123, etc.</div>
+                            <!-- <div class="format-hint">Example: 749, 123, etc.</div> -->
 
                         </div>
 
@@ -699,9 +733,9 @@ if ($report_id) {
                             <label for="record_number_year">Record Number / Year</label>
 
                             <input type="text" id="record_number_year" name="record_number_year"
-                                placeholder="B4001/2026" class="form-control">
+                                placeholder="" class="form-control">
 
-                            <div class="format-hint">Example: B4001/2026 (Letter+Number/Year)</div>
+                            <div class="format-hint">Example: B4001/2026 (Histopathology Number/Year)</div>
 
                             <div id="errorMessage" class="error-message"></div>
 
