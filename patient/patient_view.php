@@ -9,7 +9,7 @@ $query = null;
 
 // Build the query based on which search parameter is provided
 if (!empty($hospital_number)) {
-    $sql = "SELECT `id`, `record_number`, `hospital_number`, `report_year`, `first_name`, `last_name`, `report_status` FROM reports WHERE hospital_number = ? AND report_status = 'Completed' ORDER BY report_year ASC, CAST(SUBSTRING(record_number, 2) AS UNSIGNED) ASC";
+    $sql = "SELECT `id`, `record_number`, `hospital_number`, `report_year`, `first_name`, `last_name`, `report_status` FROM reports WHERE hospital_number = ? ORDER BY report_year ASC, CAST(SUBSTRING(record_number, 2) AS UNSIGNED) ASC";
     $stmt = $conn->prepare($sql);
 
     if ($stmt) {
@@ -23,7 +23,7 @@ if (!empty($hospital_number)) {
         $record_number = trim($record_number);
         $year = trim($year);
 
-        $sql = "SELECT `id`, `record_number`, `hospital_number`, `report_year`, `first_name`, `last_name`, `report_status` FROM reports WHERE record_number = ? AND report_year = ? AND report_status = 'Completed'";
+        $sql = "SELECT `id`, `record_number`, `hospital_number`, `report_year`, `first_name`, `last_name`, `report_status` FROM reports WHERE record_number = ? AND report_year = ?";
         $stmt = $conn->prepare($sql);
 
         if ($stmt) {
@@ -526,12 +526,32 @@ if (!empty($hospital_number)) {
                 $stmt_full->bind_param('i', $report_id);
                 $stmt_full->execute();
                 $report_full = $stmt_full->get_result()->fetch_assoc();
+                if (!$report_full) {
+                    continue;
+                }
+
+                $is_pending = isset($report_full['report_status']) && strtolower(trim($report_full['report_status'])) === 'pending';
                 ?>
 
                 <div class="print-container">
                     <div class="header">
                         <h1>Histopathology Report</h1>
                     </div>
+
+                    <?php if ($is_pending): ?>
+                        <div class="alert alert-warning" style="margin: 20px 0;">Your report is not ready yet.</div>
+
+                        <?php if (!empty($report_full['comment'])): ?>
+                            <div class="comments-section">
+                                <div class="field-label">Comment from the Pathologist:</div>
+                                <div class="field-content"><?php echo nl2br(htmlspecialchars($report_full['comment'])); ?></div>
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-back" onclick="window.location.href='patient_lookup.php'">← Go Back</button>
+                        </div>
+                    <?php else: ?>
                     <div class="top-section">
                         <div class="top-col">
                             <div class="top-row">
@@ -646,12 +666,11 @@ if (!empty($hospital_number)) {
                             is strongly recommended before any therapeutic intervention. This report is made only for the
                             welfare of the patient, not for any legal purpose.</div>
                     </div>
-
-                </div>
-
-                <div class="action-buttons">
-                    <button class="btn btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
-                    <button class="btn btn-back" onclick="window.location.href='patient_lookup.php'">← Go Back</button>
+                    <div class="action-buttons">
+                        <button class="btn btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+                        <button class="btn btn-back" onclick="window.location.href='patient_lookup.php'">← Go Back</button>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
