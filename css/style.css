@@ -1,0 +1,5 @@
+/* Minimal stylesheet to ensure layout and visibility */
+body { background:#f8f9fa; color:#212529; font-family: Arial, Helvetica, sans-serif; }
+.container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+.find-report-container, .lookup-box { background: white; }
+.debug-panel { position: fixed; left: 8px; top: 8px; z-index: 9999; background: #fff; border: 1px solid #eee; padding: 8px; font-size: 12px; color:#111; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
