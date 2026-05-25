@@ -697,7 +697,9 @@ if ($report_id) {
 
 </head>
 
-<body>
+<body class="patient-page-with-header">
+
+    <?php include("header.php"); ?>
 
     <?php if (!$report_data): ?>
     <!-- SEARCH FORM VIEW -->

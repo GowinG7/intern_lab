@@ -597,7 +597,9 @@ if (!empty($hospital_number)) {
 
 </head>
 
-<body>
+<body class="patient-page-with-header">
+
+    <?php include("header.php"); ?>
 
     <?php
     // Visible debug block to help track GET params and query results

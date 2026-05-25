@@ -259,7 +259,7 @@ if (!empty($hospital_number)) {
         }
 
         .btn-back {
-            background-color: #6c757d;
+            background-color: #25c457;
             color: white;
         }
 
@@ -506,7 +506,9 @@ if (!empty($hospital_number)) {
     </style>
 </head>
 
-<body>
+<body class="patient-page-with-header">
+
+    <?php include("header.php"); ?>
 
     <div class="container mt-5 mb-5">
 
