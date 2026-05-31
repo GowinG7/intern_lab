@@ -516,7 +516,9 @@ if (!empty($hospital_number)) {
         if ($query === null || $query->num_rows == 0) {
             // No results, show search form again
             ?>
-            <div class="alert alert-danger">No reports found. Please verify your search details and try again.</div>
+            <div class="alert alert-danger">
+                No report found for <?php echo !empty($record_number_year) ? htmlspecialchars($record_number_year) : 'the entered search details'; ?>.
+            </div>
             <div style="text-align:center;margin-top:20px;"><a href="patient_lookup.php" class="btn-back btn">Back to
                     search</a></div>
             <?php
@@ -541,7 +543,9 @@ if (!empty($hospital_number)) {
                     </div>
 
                     <?php if ($is_pending): ?>
-                        <div class="alert alert-warning" style="margin: 20px 0;">Your report is not ready yet.</div>
+                        <div class="alert alert-warning" style="margin: 20px 0;">
+                            Your report <?php echo htmlspecialchars($report_full['record_number'] . '/' . $report_full['report_year']); ?> is not ready yet.
+                        </div>
 
                         <?php if (!empty($report_full['comment'])): ?>
                             <div class="comments-section">

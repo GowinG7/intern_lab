@@ -3,9 +3,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const histopathologySelect = document.getElementById("histopathology_number");
   const recordNumberInput = document.getElementById("record_number");
   const yearInput = document.querySelector('input[name="year"]');
+  const reportForm = document.getElementById("reportForm");
+  const recordWarning = document.getElementById("recordWarning");
+  const recordWarningText = document.getElementById("recordWarningText");
+
+  let isProgrammaticSubmit = false;
 
   // Validate elements exist
-  if (!histopathologySelect || !recordNumberInput || !yearInput) {
+  if (!histopathologySelect || !recordNumberInput || !yearInput || !reportForm) {
     console.error("Auto Record Number: Required form elements not found");
     return;
   }
@@ -31,6 +36,38 @@ document.addEventListener("DOMContentLoaded", function () {
   yearInput.addEventListener("change", function () {
     console.log("Auto Record Number: Year changed to", this.value);
     generateRecordNumber();
+  });
+
+  reportForm.addEventListener("submit", function (event) {
+    if (isProgrammaticSubmit) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const selectedLetter = histopathologySelect.value;
+    const currentYear = yearInput.value;
+
+    if (!selectedLetter || selectedLetter === "select" || !currentYear) {
+      return;
+    }
+
+    fetchLatestRecordNumber(selectedLetter, currentYear).then((latestRecordNumber) => {
+      if (!latestRecordNumber) {
+        showWarning("Unable to verify the record number right now. Please try again.");
+        return;
+      }
+
+      if (recordNumberInput.value !== latestRecordNumber) {
+        recordNumberInput.value = latestRecordNumber;
+        showWarning(`Record number was updated to ${latestRecordNumber} because the previous one was already used for this year.`);
+      } else {
+        hideWarning();
+      }
+
+      isProgrammaticSubmit = true;
+      reportForm.submit();
+    });
   });
 
   /**
@@ -100,5 +137,42 @@ document.addEventListener("DOMContentLoaded", function () {
         recordNumberInput.value = "";
         recordNumberInput.style.color = "#dc3545";
       });
+  }
+
+  function fetchLatestRecordNumber(letter, year) {
+    return fetch("report_form.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        histopathology_number: letter,
+        year: year,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => (data.success ? data.next_record_number : null))
+      .catch((error) => {
+        console.error("Fetch error:", error);
+        return null;
+      });
+  }
+
+  function showWarning(message) {
+    if (!recordWarning || !recordWarningText) {
+      return;
+    }
+
+    recordWarningText.textContent = message;
+    recordWarning.classList.remove("d-none");
+  }
+
+  function hideWarning() {
+    if (!recordWarning || !recordWarningText) {
+      return;
+    }
+
+    recordWarningText.textContent = "";
+    recordWarning.classList.add("d-none");
   }
 });

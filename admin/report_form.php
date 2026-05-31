@@ -170,6 +170,26 @@ $currentPage = basename(__FILE__);
 
                 <h2 class="report-title">Histopathology Report</h2>
 
+                <?php if (isset($_GET['duplicate']) && $_GET['duplicate'] == 1): ?>
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        Record number <?php echo isset($_GET['record_number']) ? htmlspecialchars($_GET['record_number']) : ''; ?> already exists for this year. Please use the next available number.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <script>
+                        if (window.history && window.history.replaceState) {
+                            const url = new URL(window.location.href);
+                            url.searchParams.delete('duplicate');
+                            url.searchParams.delete('record_number');
+                            window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+                        }
+                    </script>
+                <?php endif; ?>
+
+                <div id="recordWarning" class="alert alert-warning alert-dismissible fade show d-none" role="alert">
+                    <span id="recordWarningText"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
                 <form id="reportForm" action="save_report.php" method="POST">
 
                     <!-- Report Information -->

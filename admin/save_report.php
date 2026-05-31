@@ -50,6 +50,28 @@ if (isset($_POST['save_report'])) {
 
 
 
+    $checkQuery = mysqli_prepare(
+        $conn,
+        "SELECT id FROM reports WHERE record_number = ? AND report_year = ? LIMIT 1"
+    );
+
+    if ($checkQuery) {
+        mysqli_stmt_bind_param($checkQuery, "ss", $record_number, $year);
+        mysqli_stmt_execute($checkQuery);
+        $checkResult = mysqli_stmt_get_result($checkQuery);
+
+        if (mysqli_fetch_assoc($checkResult)) {
+            mysqli_stmt_close($checkQuery);
+            $redirectNumber = urlencode($record_number);
+            header("Location: report_form.php?duplicate=1&record_number={$redirectNumber}");
+            exit;
+        }
+
+        mysqli_stmt_close($checkQuery);
+    }
+
+
+
     $query = "INSERT INTO reports(
 
     histopathology_number,

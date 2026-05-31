@@ -821,7 +821,7 @@ if (!empty($hospital_number)) {
             ?>
 
             <div class="alert alert-danger">
-                No reports found. Please verify your search details and try again.
+                No report found for <?php echo !empty($record_number_year) ? htmlspecialchars($record_number_year) : 'the entered search details'; ?>.
             </div>
 
             <?php
