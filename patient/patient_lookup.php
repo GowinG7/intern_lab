@@ -40,7 +40,7 @@ if ($report_id) {
             min-height: 100vh;
             position: relative;
             font-family: Arial, Helvetica, sans-serif;
-            background: url('images/bkmch-bg.jpg') center center / cover no-repeat fixed;
+            background: url('../shared/images/bkmch-bg.jpg') center center / cover no-repeat fixed;
         }
 
         body::before {

@@ -2,7 +2,7 @@
 
 include("../database/connection.php");
 
-if (isset($_POST['save_report'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $histopathology_number = $_POST['histopathology_number'];
 
@@ -135,15 +135,9 @@ if (isset($_POST['save_report'])) {
 
 
     if ($result) {
-        echo "
-        <script>
-
-        alert('Report Saved Successfully');
-
-        window.location.href='manage_reports.php';
-
-        </script>
-        ";
+        $newId = mysqli_insert_id($conn);
+        header("Location: manage_reports.php?saved=1&id=" . intval($newId));
+        exit;
     } else {
         echo mysqli_error($conn);
     }

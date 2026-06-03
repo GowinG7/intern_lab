@@ -10,7 +10,12 @@ document.addEventListener("DOMContentLoaded", function () {
   let isProgrammaticSubmit = false;
 
   // Validate elements exist
-  if (!histopathologySelect || !recordNumberInput || !yearInput || !reportForm) {
+  if (
+    !histopathologySelect ||
+    !recordNumberInput ||
+    !yearInput ||
+    !reportForm
+  ) {
     console.error("Auto Record Number: Required form elements not found");
     return;
   }
@@ -52,22 +57,28 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    fetchLatestRecordNumber(selectedLetter, currentYear).then((latestRecordNumber) => {
-      if (!latestRecordNumber) {
-        showWarning("Unable to verify the record number right now. Please try again.");
-        return;
-      }
+    fetchLatestRecordNumber(selectedLetter, currentYear).then(
+      (latestRecordNumber) => {
+        if (!latestRecordNumber) {
+          showWarning(
+            "Unable to verify the record number right now. Please try again.",
+          );
+          return;
+        }
 
-      if (recordNumberInput.value !== latestRecordNumber) {
-        recordNumberInput.value = latestRecordNumber;
-        showWarning(`Record number was updated to ${latestRecordNumber} because the previous one was already used for this year.`);
-      } else {
-        hideWarning();
-      }
+        if (recordNumberInput.value !== latestRecordNumber) {
+          recordNumberInput.value = latestRecordNumber;
+          showWarning(
+            `Record number was updated to ${latestRecordNumber} because the previous one was already used for this year.`,
+          );
+        } else {
+          hideWarning();
+        }
 
-      isProgrammaticSubmit = true;
-      reportForm.submit();
-    });
+        isProgrammaticSubmit = true;
+        reportForm.requestSubmit();
+      },
+    );
   });
 
   /**

@@ -111,21 +111,23 @@ if (!isset($currentPage)) {
 <nav class="navbar navbar-expand-lg patient-navbar navbar-dark fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="patient_lookup.php">
-            <img src="images/logo.png" alt="BPKMCH Logo" class="patient-logo">
+            <img src="../shared/images/logo.png" alt="BPKMCH Logo" class="patient-logo">
             <span class="patient-brand-text">
                 <span class="patient-brand-title">B.P. Koirala Memorial Cancer Hospital</span>
                 <span class="patient-brand-subtitle">Patient Report Portal</span>
             </span>
         </a>
 
-        <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#patientNavbarNav"
-            aria-controls="patientNavbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse"
+            data-bs-target="#patientNavbarNav" aria-controls="patientNavbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse justify-content-end" id="patientNavbarNav">
             <div class="navbar-nav align-items-lg-center gap-lg-2 mt-3 mt-lg-0">
-                <a class="nav-link <?= $currentPage === 'lookup' ? 'active' : '' ?>" href="patient_lookup.php">Lookup</a>
+                <a class="nav-link <?= $currentPage === 'lookup' ? 'active' : '' ?>"
+                    href="patient_lookup.php">Lookup</a>
                 <a class="nav-link <?= $currentPage === 'view' ? 'active' : '' ?>" href="patient_view.php">Reports</a>
             </div>
         </div>
