@@ -3,54 +3,67 @@
 include("auth_check.php");
 include("../database/connection.php");
 
-$currentPage = basename(__FILE__);
+$user_id = $_SESSION['admin_id'] ?? 0;
+$role = $_SESSION['role'] ?? '';
 
-// Set default dates
+// Dates
 $today = date('Y-m-d');
-$from_date = isset($_GET['from_date']) ? $_GET['from_date'] : date('Y-m-01'); // First day of month
-$to_date = isset($_GET['to_date']) ? $_GET['to_date'] : $today;
-$status_filter = isset($_GET['status']) ? $_GET['status'] : 'All';
+$from_date = $_GET['from_date'] ?? date('Y-m-01');
+$to_date = $_GET['to_date'] ?? $today;
+$status_filter = $_GET['status'] ?? 'All';
 
-// Build WHERE clause for date filtering
-$date_where = "AND DATE(created_at) BETWEEN '$from_date' AND '$to_date'";
+// Base condition (ROLE FILTER)
+if ($role === "admin") {
+    $base_filter = "1=1";
+} else {
+    $base_filter = "created_by = " . (int) $user_id;
+}
 
-/* Total Reports */
+// DATE FILTER (safe string)
+$date_filter = "AND DATE(created_at) BETWEEN '$from_date' AND '$to_date'";
 
-$total_where = "WHERE 1=1 $date_where";
+/*  TOTAL REPORTS  */
+
+$total_where = "WHERE $base_filter $date_filter";
+
 if ($status_filter !== 'All') {
-    $total_where .= " AND report_status='$status_filter'";
+    $total_where .= " AND report_status = '" . mysqli_real_escape_string($conn, $status_filter) . "'";
 }
 
 $total_query = mysqli_query(
     $conn,
-    "SELECT * FROM reports $total_where"
+    "SELECT COUNT(*) AS total FROM reports $total_where"
 );
 
-$total_reports = mysqli_num_rows($total_query);
+$total_reports = mysqli_fetch_assoc($total_query)['total'] ?? 0;
 
 
-
-/* Completed Reports */
+/*  COMPLETED REPORTS  */
 
 $completed_query = mysqli_query(
     $conn,
-    "SELECT * FROM reports
-     WHERE report_status='Completed' $date_where"
+    "SELECT COUNT(*) AS total
+     FROM reports
+     WHERE $base_filter
+     AND report_status='Completed'
+     $date_filter"
 );
 
-$completed_reports = mysqli_num_rows($completed_query);
+$completed_reports = mysqli_fetch_assoc($completed_query)['total'] ?? 0;
 
 
-
-/* Pending Reports */
+/*  PENDING REPORTS  */
 
 $pending_query = mysqli_query(
     $conn,
-    "SELECT * FROM reports
-     WHERE report_status='Pending' $date_where"
+    "SELECT COUNT(*) AS total
+     FROM reports
+     WHERE $base_filter
+     AND report_status='Pending'
+     $date_filter"
 );
 
-$pending_reports = mysqli_num_rows($pending_query);
+$pending_reports = mysqli_fetch_assoc($pending_query)['total'] ?? 0;
 
 ?>
 
@@ -260,7 +273,7 @@ $pending_reports = mysqli_num_rows($pending_query);
             <!-- Filter Analytics Section -->
             <div class="filter-section">
                 <h3>Filter Analytics</h3>
-                
+
                 <form method="GET" class="filter-form">
                     <div class="filter-controls">
                         <div class="filter-group">
@@ -276,9 +289,12 @@ $pending_reports = mysqli_num_rows($pending_query);
                         <div class="filter-group">
                             <label for="status">Status</label>
                             <select id="status" name="status">
-                                <option value="All" <?php echo $status_filter === 'All' ? 'selected' : ''; ?>>All Categories</option>
-                                <option value="Completed" <?php echo $status_filter === 'Completed' ? 'selected' : ''; ?>>Completed</option>
-                                <option value="Pending" <?php echo $status_filter === 'Pending' ? 'selected' : ''; ?>>Pending</option>
+                                <option value="All" <?php echo $status_filter === 'All' ? 'selected' : ''; ?>>All
+                                    Categories</option>
+                                <option value="Completed" <?php echo $status_filter === 'Completed' ? 'selected' : ''; ?>>
+                                    Completed</option>
+                                <option value="Pending" <?php echo $status_filter === 'Pending' ? 'selected' : ''; ?>>
+                                    Pending</option>
                             </select>
                         </div>
 
@@ -291,14 +307,18 @@ $pending_reports = mysqli_num_rows($pending_query);
                     <!-- Quick Filters -->
                     <div class="quick-filters">
                         <button type="button" class="quick-filter-btn" onclick="setDateFilter('today')">Today</button>
-                        <button type="button" class="quick-filter-btn" onclick="setDateFilter('last7d')">Last 7d</button>
-                        <button type="button" class="quick-filter-btn" onclick="setDateFilter('last30d')">Last 30d</button>
-                        <button type="button" class="quick-filter-btn" onclick="setDateFilter('thismonth')">This Month</button>
+                        <button type="button" class="quick-filter-btn" onclick="setDateFilter('last7d')">Last
+                            7d</button>
+                        <button type="button" class="quick-filter-btn" onclick="setDateFilter('last30d')">Last
+                            30d</button>
+                        <button type="button" class="quick-filter-btn" onclick="setDateFilter('thismonth')">This
+                            Month</button>
                     </div>
 
                     <!-- Filter Info -->
                     <div class="filter-info">
-                        Showing data from <strong><?php echo date('M d, Y', strtotime($from_date)); ?></strong> to <strong><?php echo date('M d, Y', strtotime($to_date)); ?></strong>
+                        Showing data from <strong><?php echo date('M d, Y', strtotime($from_date)); ?></strong> to
+                        <strong><?php echo date('M d, Y', strtotime($to_date)); ?></strong>
                         <?php if ($status_filter !== 'All') { ?>
                             | Status: <strong><?php echo $status_filter; ?></strong>
                         <?php } ?>
@@ -373,7 +393,7 @@ $pending_reports = mysqli_num_rows($pending_query);
 
             toDate = today;
 
-            switch(filterType) {
+            switch (filterType) {
                 case 'today':
                     fromDate = new Date(today);
                     break;
