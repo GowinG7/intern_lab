@@ -5,258 +5,248 @@ include("../database/connection.php");
 
 $currentPage = basename(__FILE__);
 
+$user_id = $_SESSION['admin_id'] ?? 0;
+$role = $_SESSION['role'] ?? '';
+
+//Pagination
+$limit = 10;
+
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+
+if ($page < 1) {
+    $page = 1;
+}
+
+$offset = ($page - 1) * $limit;
+
+//role filter
+if ($role === "admin") {
+    $filter = "1=1";
+} else {
+    $filter = "created_by = " . (int) $user_id;
+}
+
+//total count
+$countQuery = mysqli_query(
+    $conn,
+    "SELECT COUNT(*) AS total
+     FROM reports
+     WHERE $filter"
+);
+
+$totalRows = mysqli_fetch_assoc($countQuery)['total'] ?? 0;
+$totalPages = ceil($totalRows / $limit);
+
+//fetch data
 $query = mysqli_query(
-     $conn,
-     "SELECT `id`, `histopathology_number`, `record_number`, `hospital_number`, `report_year`, `first_name`, `middle_name`, `last_name`, `gender`, `age`, `date_receipt`, `date_dispatch`, `referring_physician`, `clinical_features`, `biopsy_site`, `procedure_performed`, `gross_description`, `microscopic_description`, `diagnosis`, `pathologist`, `consultant_pathologist`, `report_status`, `comment`, `created_at` FROM `reports` ORDER BY report_year ASC, CAST(SUBSTRING(record_number, 2) AS UNSIGNED) ASC"
+    $conn,
+    "SELECT
+        id,
+        created_by,
+        record_number,
+        hospital_number,
+        report_year,
+        first_name,
+        middle_name,
+        last_name,
+        biopsy_site,
+        report_status,
+        created_at
+     FROM reports
+     WHERE $filter
+     ORDER BY created_at DESC
+     LIMIT $limit OFFSET $offset"
 );
 
 ?>
 
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
+    <title>Total Reports</title>
 
-     <title>Total Reports</title>
+    <?php include("../shared/links.php"); ?>
 
-     <?php include("../shared/links.php"); ?>
+    <style>
+        body {
+            background-color: #e5f0eb !important;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 90px;
+            /* gives space below header */
+        }
 
-     <link rel="stylesheet" href="../css/style.css">
+        .container-box {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+        }
 
-     <style>
-          /* Page Container */
-          .admin-content {
-               background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-               min-height: 100vh;
-               padding: 30px 0;
-          }
+        .search-box {
+            max-width: 500px;
+        }
 
-          .container {
-               background: white;
-               border-radius: 12px;
-               padding: 40px;
-               box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-          }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #fff;
+        }
 
-          /* Page Title */
-          h2 {
-               color: #1e293b;
-               font-weight: 700;
-               margin-bottom: 30px;
-               padding-bottom: 15px;
-               border-bottom: 3px solid #0d6efd;
-               display: inline-block;
-          }
+        .Completed {
+            background: green;
+        }
 
-          /* Table Wrapper */
-          .table-wrapper {
-               overflow-x: auto;
-               border-radius: 10px;
-               box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-          }
+        .Pending {
+            background: orange;
+        }
+    </style>
 
-          /* Table Styling */
-          .table {
-               margin: 0;
-               border-collapse: collapse;
-          }
-
-          .table thead tr {
-               background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
-          }
-
-          .table thead th {
-               color: white;
-               font-weight: 600;
-               padding: 15px 12px;
-               border: none;
-               text-align: left;
-               font-size: 14px;
-               text-transform: uppercase;
-               letter-spacing: 0.5px;
-          }
-
-          .table tbody tr {
-               border-bottom: 1px solid #e9ecef;
-               transition: all 0.3s ease;
-          }
-
-          .table tbody tr:hover {
-               background-color: #f8f9fa;
-               box-shadow: inset 0 0 10px rgba(13, 110, 253, 0.05);
-          }
-
-          .table tbody td {
-               padding: 14px 12px;
-               color: #495057;
-               font-size: 14px;
-               vertical-align: middle;
-          }
-
-          /* Status Badge */
-          .status-badge {
-               display: inline-block;
-               padding: 8px 14px;
-               border-radius: 20px;
-               font-weight: 600;
-               font-size: 12px;
-               text-transform: uppercase;
-               letter-spacing: 0.5px;
-               box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-               transition: transform 0.2s ease;
-          }
-
-          .status-badge:hover {
-               transform: translateY(-2px);
-               box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-          }
-
-          .status-completed {
-               background-color: #198754;
-               color: white;
-          }
-
-          .status-pending {
-               background-color: #ffc107;
-               color: #000;
-          }
-
-          /* Action Buttons */
-          .btn-sm {
-               padding: 6px 12px;
-               font-size: 12px;
-               font-weight: 600;
-               border-radius: 6px;
-               transition: all 0.3s ease;
-               margin-right: 5px;
-          }
-
-          .btn-warning {
-               background-color: #0dcaf0;
-               border: none;
-               color: white;
-          }
-
-          .btn-warning:hover {
-               background-color: #0aa2c7;
-               transform: translateY(-2px);
-               box-shadow: 0 4px 12px rgba(13, 202, 240, 0.4);
-          }
-
-          .btn-danger {
-               background-color: #dc3545;
-               border: none;
-               color: white;
-          }
-
-          .btn-danger:hover {
-               background-color: #bb2d3b;
-               transform: translateY(-2px);
-               box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
-          }
-
-          /* Responsive Design */
-          @media (max-width: 768px) {
-               .container {
-                    padding: 20px;
-               }
-
-               .table thead th {
-                    padding: 12px 8px;
-                    font-size: 12px;
-               }
-
-               .table tbody td {
-                    padding: 10px 8px;
-                    font-size: 12px;
-               }
-
-               .btn-sm {
-                    padding: 5px 10px;
-                    font-size: 11px;
-               }
-          }
-     </style>
 
 </head>
 
 <body>
-     <?php include_once("header.php"); ?>
 
-     <div class="admin-content">
-          <div class="container">
 
-               <h2 class="mb-4">Total Reports</h2>
+    <?php include("header.php"); ?>
 
-               <div class="table-wrapper">
-                    <table class="table table-bordered table-striped">
+    <div class="container mt-3 container-box">
 
-                         <tr>
-                              <th>ID</th>
-                              <th>Record Number</th>
-                              <th>Year</th>
-                              <th>Patient Name</th>
-                              <th>Hospital Number</th>
-                              <th>Status</th>
-                              <th>Action</th>
-                         </tr>
+        <h4>Total Reports</h4>
 
-                         <?php
+        <!-- SEARCH SECTION -->
 
-                         $counter = 1;
-                         while ($row = mysqli_fetch_assoc($query)) {
+        <div class="card p-3 mb-3">
 
-                              $statusClass = ($row['report_status'] === 'Completed') ? 'status-completed' : 'status-pending';
+            <div class="row align-items-center">
 
-                              ?>
+                <div class="col-md-8">
 
-                              <tr>
+                    <div class="input-group">
 
-                                   <td><?php echo $counter; ?></td>
+                        <input type="text" id="liveSearchInput" class="form-control search-box"
+                            placeholder="Search by Name / Record No / Hospital No / Year / Biopsy Site">
 
-                                   <td><?php echo $row['record_number']; ?></td>
+                        <button class="btn btn-primary" id="searchBtn">
+                            Search
+                        </button>
 
-                                   <td><?php echo $row['report_year']; ?></td>
+                    </div>
 
-                                   <td><?php echo $row['first_name'] . " " . $row['last_name']; ?></td>
+                </div>
 
-                                   <td><?php echo $row['hospital_number']; ?></td>
+                <div class="col-md-4 text-end">
+                    <small id="searchResultInfo" class="text-muted"></small>
+                </div>
 
-                                   <td>
+            </div>
 
-                                        <span class="status-badge <?php echo $statusClass; ?>">
+        </div>
 
-                                             <?php echo $row['report_status']; ?>
+        <!-- TABLE -->
 
-                                        </span>
+        <table class="table table-bordered table-striped mt-3">
 
-                                   </td>
+            <thead>
 
-                                   <td>
+                <tr>
+                    <th>SN.</th>
+                    <th>Record No</th>
+                    <th>Year</th>
+                    <th>Patient Name</th>
+                    <th>Hospital No</th>
+                    <th>Biopsy Site</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
 
-                                        <a href="view_report_pdf.php?id=<?php echo $row['id']; ?>"
-                                             class="btn btn-warning btn-sm">
+            </thead>
 
-                                             View
+            <tbody id="reportTableBody">
 
-                                        </a>
+                <?php
 
-                                   </td>
+                $serial = $offset + 1;
 
-                              </tr>
+                while ($row = mysqli_fetch_assoc($query)) {
 
-                              <?php
-                              $counter++;
-                         }
-                         ?>
+                    $status = $row['report_status'];
 
-                    </table>
-               </div>
+                    ?>
 
-          </div>
-     </div>
+                    <tr>
 
-     <?php include_once("footer.php"); ?>
+                        <td><?= $serial++ ?></td>
+
+                        <td><?= htmlspecialchars($row['record_number']) ?></td>
+
+                        <td><?= htmlspecialchars($row['report_year']) ?></td>
+
+                        <td>
+                            <?= htmlspecialchars(
+                                trim(
+                                    $row['first_name'] . ' ' .
+                                    $row['middle_name'] . ' ' .
+                                    $row['last_name']
+                                )
+                            ) ?>
+                        </td>
+
+                        <td><?= htmlspecialchars($row['hospital_number']) ?></td>
+
+                        <td><?= htmlspecialchars($row['biopsy_site']) ?></td>
+
+                        <td>
+                            <span class="status-badge <?= $status ?>">
+                                <?= htmlspecialchars($status) ?>
+                            </span>
+                        </td>
+
+
+                        <td>
+
+                            <a href="view_report_pdf.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">
+                                View
+                            </a>
+
+                        </td>
+                    </tr>
+
+                    <?php
+                }
+                ?>
+
+            </tbody>
+
+        </table>
+
+        <!-- PAGINATION -->
+
+        <div class="mt-3">
+
+            <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
+
+                <a href="?page=<?= $i ?>" class="btn btn-sm <?= ($i == $page) ? 'btn-primary' : 'btn-secondary' ?>">
+                    <?= $i ?>
+                </a>
+
+            <?php } ?>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        const USER_ROLE = "<?= $role ?>";
+        const USER_ID = "<?= $user_id ?>";
+    </script>
+
+    <script src="../js/record_search.js"></script>
 
 </body>
 
