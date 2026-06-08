@@ -1,31 +1,44 @@
 <?php
 
 session_start();
-
 include("../database/connection.php");
 
 if (isset($_POST['login_btn'])) {
+
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $query = "SELECT * FROM admin_credens
-              WHERE username='$username'
-              AND password='$password'";
+    $stmt = mysqli_prepare(
+        $conn,
+        "SELECT * FROM admin_creden WHERE username=?"
+    );
 
-    $result = mysqli_query($conn, $query);
+    mysqli_stmt_bind_param($stmt, "s", $username);
+    mysqli_stmt_execute($stmt);
 
-    if (mysqli_num_rows($result) > 0) {
-        $_SESSION['admin_username'] = $username;
+    $result = mysqli_stmt_get_result($stmt);
 
-        header("location: dashboard.php");
-    } else {
-        echo "
-        <script>
+    if ($row = mysqli_fetch_assoc($result)) {
+
+        if (password_verify($password, $row['password'])) {
+
+            $_SESSION['admin_id'] = $row['id'];
+            $_SESSION['admin_username'] = $row['username'];
+            $_SESSION['full_name'] = $row['full_name'];
+
+            // ADD THIS LINE
+            $_SESSION['role'] = $row['role'];
+
+            header("Location: dashboard.php");
+            exit;
+        }
+    }
+
+    echo "
+    <script>
         alert('Invalid Login');
         window.location.href='login.php';
-        </script>
-        ";
-    }
+    </script>
+    ";
 }
-
 ?>
