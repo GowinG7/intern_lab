@@ -84,7 +84,7 @@ if (isset($_POST['signup_btn'])) {
 
                 <input type="password" name="password" class="form-control mb-2" placeholder="Password" required>
 
-                <select name="role" class="form-control mb-2" required>
+                <select name="role" class="form-select mb-2" required>
                     <option value="pathologist">Pathologist</option>
                     <option value="admin">Admin</option>
                 </select>
