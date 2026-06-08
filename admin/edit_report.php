@@ -49,7 +49,7 @@ $row = mysqli_fetch_assoc($query);
                             <div class="d-flex align-items-center gap-2">
                                 <select id="histopathology_number" name="histopathology_number" class="form-select"
                                     style="max-width: 110px; min-width: 90px;">
-                                    <option value="A" <?php echo $row['histopathology_number'] == 'A' ? 'selected' : ''; ?>>A</option>
+                                    <option value="FN" <?php echo $row['histopathology_number'] == 'FN' ? 'selected' : ''; ?>>FN</option>
                                     <option value="B" <?php echo $row['histopathology_number'] == 'B' ? 'selected' : ''; ?>>B</option>
                                 </select>
 
