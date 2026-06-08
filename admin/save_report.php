@@ -2,7 +2,19 @@
 session_start();
 include("../database/connection.php");
 
+/* 🔒 must be logged in */
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // 👤 logged-in user (creator)
+    $created_by = $_SESSION['admin_id'];
+
+
+    // INPUT DATA
 
     $histopathology_number = $_POST['histopathology_number'] ?? '';
     $record_number = $_POST['record_number'] ?? '';
@@ -23,14 +35,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $gross_description = $_POST['gross_description'] ?? '';
     $microscopic_description = $_POST['microscopic_description'] ?? '';
     $diagnosis = $_POST['diagnosis'] ?? '';
-    $pathologist = $_POST['pathologist'] ?? '';
-    $consultant_pathologist = $_POST['consultant_pathologist'] ?? '';
+
+
+    $pathologist = '';
+
+    if (
+        isset($_POST['patho']) &&
+        !empty($_POST['pathologist'])
+    ) {
+        $pathologist = trim($_POST['pathologist']);
+    }
+
+    $consultant_pathologist = '';
+
+    if (
+        isset($_POST['consultant_patho']) &&
+        !empty($_POST['consultant_pathologist'])
+    ) {
+        $consultant_pathologist = trim($_POST['consultant_pathologist']);
+    }
+
+
     $report_status = $_POST['report_status'] ?? '';
     $comment = $_POST['comment'] ?? '';
 
-    // =========================
+
     // 1. DUPLICATE CHECK
-    // =========================
+
     $checkQuery = mysqli_prepare(
         $conn,
         "SELECT id FROM reports WHERE record_number = ? AND report_year = ? LIMIT 1"
@@ -41,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $resultCheck = mysqli_stmt_get_result($checkQuery);
 
     if (mysqli_fetch_assoc($resultCheck)) {
+
         mysqli_stmt_close($checkQuery);
 
         $_SESSION['error'] = "Duplicate record number found.";
@@ -50,9 +82,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     mysqli_stmt_close($checkQuery);
 
-    // =========================
-    // 2. INSERT SAFE QUERY
-    // =========================
+
+    // FINAL SAFETY CHECK (VERY IMPORTANT)
+    $checkHospital = mysqli_prepare(
+        $conn,
+        "SELECT id FROM reports WHERE hospital_number = ? LIMIT 1"
+    );
+
+    mysqli_stmt_bind_param($checkHospital, "s", $hospital_number);
+    mysqli_stmt_execute($checkHospital);
+    $res = mysqli_stmt_get_result($checkHospital);
+
+    if (mysqli_fetch_assoc($res)) {
+        mysqli_stmt_close($checkHospital);
+
+        $_SESSION['error'] = "Hospital number already exists.";
+        header("Location: report_form.php?hospital_duplicate=1");
+        exit;
+    }
+
+    mysqli_stmt_close($checkHospital);
+
+    // 2. INSERT QUERY
+
     $stmt = mysqli_prepare(
         $conn,
         "INSERT INTO reports (
@@ -78,8 +130,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             consultant_pathologist,
             report_status,
             comment,
+            created_by,
             created_at
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())"
+        )
+        VALUES (
+            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW()
+        )"
     );
 
     if (!$stmt) {
@@ -88,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     mysqli_stmt_bind_param(
         $stmt,
-        "ssssssssssssssssssssss",
+        "ssssssssssssssssssssssi",
         $histopathology_number,
         $record_number,
         $hospital_number,
@@ -110,12 +166,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pathologist,
         $consultant_pathologist,
         $report_status,
-        $comment
+        $comment,
+        $created_by
     );
 
-    // =========================
+    // 
     // 3. EXECUTE
-    // =========================
+    // 
     if (mysqli_stmt_execute($stmt)) {
 
         $newId = mysqli_insert_id($conn);

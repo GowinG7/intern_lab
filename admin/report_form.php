@@ -1,7 +1,7 @@
 <?php
 include("auth_check.php");
 
-// ========== HANDLE AJAX REQUEST FOR RECORD NUMBER ==========
+//  HANDLE AJAX REQUEST FOR RECORD NUMBER 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Set JSON header immediately for any POST request
     header('Content-Type: application/json');
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $year = $input['year'];
 
     // Validate inputs
-    if (!preg_match('/^[A-Z]$/', $histopathology_number)) {
+    if (!preg_match('/^[A-Z]{1,2}$/', $histopathology_number)) {
         echo json_encode([
             'success' => false,
             'message' => 'Invalid histopathology number'
@@ -47,12 +47,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Find the max NUMERIC value for records of this series and year
     // Query counts ALL reports (Pending, Completed, etc.) to prevent duplicate record numbers
     // Uses SUBSTRING to properly extract numeric part (A4000 -> 4000)
+    $prefix_length = strlen($histopathology_number);
+
     $stmt = mysqli_prepare(
         $conn,
-        "SELECT MAX(CAST(SUBSTRING(record_number, 2) AS UNSIGNED)) as max_numeric_value 
-         FROM reports 
-         WHERE histopathology_number = ? 
-         AND report_year = ?"
+        "SELECT MAX(
+        CAST(SUBSTRING(record_number, ?) AS UNSIGNED)
+    ) as max_numeric_value
+    FROM reports
+    WHERE histopathology_number = ?
+    AND report_year = ?"
     );
 
     if (!$stmt) {
@@ -63,10 +67,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Bind parameters - filter by the specific series (A or B) and year
-    mysqli_stmt_bind_param($stmt, "ss", $histopathology_number, $year);
+    // mysqli_stmt_bind_param(
+    //     $stmt,
+    //     "iss",
+    //     $prefix_length,
+    //     $histopathology_number,
+    //     $year
+    // );
 
-    // Execute query
+    // // Execute query
+    // if (!mysqli_stmt_execute($stmt)) {
+    //     echo json_encode([
+    //         'success' => false,
+    //         'message' => 'Query execution error: ' . mysqli_error($conn)
+    //     ]);
+    //     mysqli_stmt_close($stmt);
+    //     exit;
+    // }
+
+    // // Bind parameters - filter by the specific series (FN or B) and year
+    // mysqli_stmt_bind_param($stmt, "iss", $prefix_length, $histopathology_number, $year);
+    // // Execute query
+    // if (!mysqli_stmt_execute($stmt)) {
+    //     echo json_encode([
+    //         'success' => false,
+    //         'message' => 'Query execution error: ' . mysqli_error($conn)
+    //     ]);
+    //     mysqli_stmt_close($stmt);
+    //     exit;
+    // }
+
+    // // Get result
+    // $result = mysqli_stmt_get_result($stmt);
+    // $row = mysqli_fetch_assoc($result);
+    // $max_numeric_value = $row['max_numeric_value'];
+
+    mysqli_stmt_bind_param(
+        $stmt,
+        "iss",
+        $prefix_length,
+        $histopathology_number,
+        $year
+    );
+
     if (!mysqli_stmt_execute($stmt)) {
         echo json_encode([
             'success' => false,
@@ -76,10 +119,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Get result
     $result = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($result);
     $max_numeric_value = $row['max_numeric_value'];
+
     mysqli_stmt_close($stmt);
 
     // Start from 4000 if no records exist for this series, otherwise increment
@@ -140,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
     exit;
 }
-// ========== END AJAX HANDLER ==========
+//  END AJAX HANDLER 
 
 // Include links for HTML page display only
 include("../shared/links.php");
@@ -172,7 +215,9 @@ $currentPage = basename(__FILE__);
 
                 <?php if (isset($_GET['duplicate']) && $_GET['duplicate'] == 1): ?>
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        Record number <?php echo isset($_GET['record_number']) ? htmlspecialchars($_GET['record_number']) : ''; ?> already exists for this year. Please use the next available number.
+                        Record number
+                        <?php echo isset($_GET['record_number']) ? htmlspecialchars($_GET['record_number']) : ''; ?> already
+                        exists for this year. Please use the next available number.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <script>
@@ -200,7 +245,7 @@ $currentPage = basename(__FILE__);
                             <div class="d-flex align-items-center gap-2">
                                 <select id="histopathology_number" name="histopathology_number" class="form-select"
                                     style="max-width: 110px; min-width: 90px;">
-                                    <option value="A" selected>A</option>
+                                    <option value="FN" selected>FN</option>
                                     <option value="B">B</option>
                                 </select>
 
@@ -260,7 +305,8 @@ $currentPage = basename(__FILE__);
 
 
                         <div class="col-md-4 mb-3">
-                            <label>Date of Receipt</label>
+                            <!-- paila Date of Reciept thiyo so aba aspiration lekheko matra ho tara  -->
+                            <label>Date of Aspiration</label>
                             <input type="date" name="date_receipt" class="form-control">
                         </div>
 
@@ -299,16 +345,16 @@ $currentPage = basename(__FILE__);
 
                         <div class="col-md-6 mb-3">
                             <label>Biopsy Site</label>
-                            <input type="text" name="biopsy_site" class="form-control">
+                            <textarea name="biopsy_site" rows="4" class="form-control" placeholder=""></textarea>
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label>Procedure Performed</label>
-                            <input type="text" name="procedure_performed" class="form-control">
+                            <textarea name="procedure_performed" rows="4" class="form-control"
+                                placeholder=""></textarea>
                         </div>
 
                     </div>
-
                     <!-- Gross Description -->
 
                     <div class="row">
@@ -338,13 +384,87 @@ $currentPage = basename(__FILE__);
 
                     <!-- Pathologist -->
 
-                    <div class="row">
+                    <div class="row mb-3">
+
+                        <div class="col-md-4">
+
+                            <div class="form-check mb-2">
+                                <input type="checkbox" class="form-check-input" id="patho" name="patho">
+                                <label class="form-check-label" for="patho">
+                                    Pathologist
+                                </label>
+                            </div>
+
+                            <select name="pathologist" id="pathologist" class="form-select" disabled>
+                                <option value="">Select Pathologist</option>
+                                <option value="Dr.GG">Dr.GG</option>
+                                <option value="Dr.SS">Dr.SS</option>
+                                <option value="Dr.BT">Dr.BT</option>
+                                <option value="Dr.BG">Dr.BG</option>
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <div class="form-check mb-2">
+                                <input type="checkbox" class="form-check-input" id="consultant_patho"
+                                    name="consultant_patho">
+                                <label class="form-check-label" for="consultant_patho">
+                                    Consultant Pathologist
+                                </label>
+                            </div>
+
+                            <select name="consultant_pathologist" id="consultant_pathologist" class="form-select"
+                                disabled>
+                                <option value="">Select Consultant</option>
+                                <option value="Dr.GG">Dr.GG</option>
+                                <option value="Dr.SS">Dr.SS</option>
+                                <option value="Dr.BT">Dr.BT</option>
+                                <option value="Dr.BG">Dr.BG</option>
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label class="fw-semibold mb-1">
+                                Report Status
+                            </label>
+
+                            <select id="report_status" name="report_status" class="form-select">
+
+                                <option value="Pending">Pending</option>
+                                <option value="Completed">Completed</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <!-- <div class="row">
 
                         <div class="col-md-4 mb-3">
 
-                            <label>Pathologist</label>
 
-                            <select id="patho" name="pathologist" class="form-select">
+
+                            <input type="checkbox" name="patho" id="patho" value="pathologist">
+                            <label for="pathoType">Pathologist</label> <br>
+                            <input type="checkbox" name="consultant_patho" id="consultant_patho"
+                                value="consultant pathologist">
+                            <label for="pathoType">Consultant Pathologist </label> <br>
+
+                            <select id="patho_name" name="pathologist" class="form-select">
+                                <option value="select">Select your Name</option>
+                                <option value="Dr.GG">Dr.GG</option>
+                                <option value="Dr.SS">Dr.SS</option>
+                                <option value="Dr.BT">Dr.BT</option>
+                                <option value="Dr.BG">Dr.BG</option>
+                            </select>
+                        </div>
+                        </div> -->
+                    <!-- <select id="patho" name="pathologist" class="form-select">
                                 <option value="Dr.GG">Dr.GG</option>
                                 <option value="Dr.SS">Dr.SS</option>
                                 <option value="Dr.BT">Dr.BT</option>
@@ -364,9 +484,9 @@ $currentPage = basename(__FILE__);
                                 <option value="Dr.BG">Dr.BG</option>
                             </select>
 
-                        </div>
+                        </div> -->
 
-                        <div class="col-md-4 mb-3">
+                    <!-- <div class="col-md-4 mb-3">
 
                             <label>Report Status</label>
 
@@ -376,7 +496,7 @@ $currentPage = basename(__FILE__);
                             </select>
 
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Comment -->
 
@@ -398,6 +518,26 @@ $currentPage = basename(__FILE__);
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('patho').addEventListener('change', function () {
+
+            document.getElementById('pathologist').disabled = !this.checked;
+
+            if (!this.checked) {
+                document.getElementById('pathologist').selectedIndex = 0;
+            }
+        });
+
+        document.getElementById('consultant_patho').addEventListener('change', function () {
+
+            document.getElementById('consultant_pathologist').disabled = !this.checked;
+
+            if (!this.checked) {
+                document.getElementById('consultant_pathologist').selectedIndex = 0;
+            }
+        });
+    </script>
 
 </body>
 
