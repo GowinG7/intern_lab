@@ -117,19 +117,5 @@ if (!isset($currentPage)) {
                 <span class="patient-brand-subtitle">Patient Report Portal</span>
             </span>
         </a>
-
-        <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse"
-            data-bs-target="#patientNavbarNav" aria-controls="patientNavbarNav" aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse justify-content-end" id="patientNavbarNav">
-            <div class="navbar-nav align-items-lg-center gap-lg-2 mt-3 mt-lg-0">
-                <a class="nav-link <?= $currentPage === 'lookup' ? 'active' : '' ?>"
-                    href="patient_lookup.php">Lookup</a>
-                <a class="nav-link <?= $currentPage === 'view' ? 'active' : '' ?>" href="patient_view.php">Reports</a>
-            </div>
-        </div>
     </div>
 </nav>
