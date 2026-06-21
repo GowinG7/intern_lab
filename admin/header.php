@@ -195,16 +195,22 @@ include_once("../shared/links.php");
                 ☰
             </button>
 
-            <span class="navbar-brand fw-bold mb-0">Admin Panel</span>
+            <!-- Logo + Title -->
+            <a href="dashboard.php" class="d-flex align-items-center gap-2 text-decoration-none text-white">
+                <img src="../shared/images/logo.png" alt="Logo" class="rounded-circle bg-white"
+                    style="width:40px; height:40px; object-fit:cover;">
+                <span class="navbar-brand fw-bold mb-0">Admin Panel</span>
+            </a>
         </div>
 
         <div class="d-flex align-items-center gap-2">
-            <!-- Welcome message - now visible on all screens -->
+            <!-- Welcome message -->
             <span class="admin-welcome">
-                Welcome <strong><?php echo isset($_SESSION['admin_username']) ? htmlspecialchars($_SESSION['admin_username']) : 'Admin'; ?></strong>
+                Welcome
+                <strong><?php echo isset($_SESSION['admin_username']) ? htmlspecialchars($_SESSION['admin_username']) : 'Admin'; ?></strong>
             </span>
 
-            <!-- Logout always visible -->
+            <!-- Logout -->
             <a href="logout.php" class="btn btn-light btn-sm">Logout</a>
         </div>
     </div>
