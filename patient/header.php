@@ -89,7 +89,7 @@ if (!isset($currentPage)) {
         }
 
         .patient-brand-title {
-            font-size: 0.92rem;
+            font-size: 0.87rem;
         }
 
         .patient-brand-subtitle {
