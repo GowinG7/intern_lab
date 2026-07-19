@@ -519,25 +519,7 @@ $currentPage = basename(__FILE__);
         </div>
     </div>
 
-    <script>
-        document.getElementById('patho').addEventListener('change', function () {
-
-            document.getElementById('pathologist').disabled = !this.checked;
-
-            if (!this.checked) {
-                document.getElementById('pathologist').selectedIndex = 0;
-            }
-        });
-
-        document.getElementById('consultant_patho').addEventListener('change', function () {
-
-            document.getElementById('consultant_pathologist').disabled = !this.checked;
-
-            if (!this.checked) {
-                document.getElementById('consultant_pathologist').selectedIndex = 0;
-            }
-        });
-    </script>
+    <script src="../js/report-form-toggles.js"></script>
 
 </body>
 

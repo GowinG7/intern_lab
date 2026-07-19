@@ -69,42 +69,7 @@ $query = mysqli_query(
 
     <?php include("../shared/links.php"); ?>
 
-    <style>
-        body {
-            background-color: #e5f0eb !important;
-            min-height: 100vh;
-            margin: 0;
-            padding-top: 90px;
-            /* gives space below header */
-        }
-
-        .container-box {
-            background: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            margin-top: 20px;
-        }
-
-        .search-box {
-            max-width: 500px;
-        }
-
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            color: #fff;
-        }
-
-        .Completed {
-            background: green;
-        }
-
-        .Pending {
-            background: orange;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/total_reports.css">
 
 
 </head>

@@ -11,76 +11,7 @@ session_start();
 
     <?php include("../shared/links.php"); ?>
 
-    <style>
-        :root { --admin-green-dark: #164a44; --patient-green: #25c457; }
-
-        html, body { height: 100%; margin: 0; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            min-height: 100vh;
-            position: relative;
-            background: url('../shared/images/bkmch-bg.jpg') center center / cover no-repeat fixed;
-            color: #222;
-        }
-
-        /* match patient lookup: subtle neutral overlay */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: rgba(255,255,255,0.55);
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .login-page-wrapper { position: relative; z-index: 1; min-height: 100vh; display:flex; align-items:center; justify-content:center; padding:40px 12px; }
-
-        .card {
-            background: rgba(255,255,255,0.78);
-            backdrop-filter: blur(6px);
-            border-radius: 15px;
-            padding: 36px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-            border: 1px solid rgba(0,0,0,0.04);
-            max-width: 720px;
-            width: 100%;
-        }
-
-        .card h2 {
-            color: #0f8a22;
-            font-weight: 700;
-            margin-bottom: 18px;
-            font-size: 26px;
-            text-align: center;
-            padding-bottom: 12px;
-            border-bottom: 3px solid rgba(236,240,247,0.8);
-        }
-
-        label { display:block; margin-bottom:8px; font-weight:600; color:#495057; }
-
-        .form-control {
-            border-radius: 8px;
-            border: 1px solid #dee2e6;
-            padding: 12px 15px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .form-control::placeholder { color: #6c757d; font-style: italic; }
-
-        .form-control:focus { border-color: var(--patient-green); box-shadow: 0 0 0 0.2rem rgba(37,196,87,0.12); outline:none; }
-
-        .divider { text-align:center; margin:20px 0; color:#6c757d; font-weight:600; position:relative; padding:0 10px; }
-        .divider::before, .divider::after { content:''; position:absolute; top:50%; transform:translateY(-50%); width:45%; height:1px; background-color:#dee2e6; }
-        .divider::before{ left:0 } .divider::after{ right:0 }
-
-        .btn-login { background-color: var(--patient-green); border:none; padding:12px; font-weight:700; border-radius:8px; color:#fff; transition:all 0.3s ease; }
-        .btn-login:hover { background-color:#428d40e8; transform:translateY(-2px); box-shadow:0 4px 12px rgba(29,116,55,0.4); }
-
-        @media (max-width:768px){ .card{ padding:24px } .card h2{ font-size:20px } }
-
-    </style>
+    <link rel="stylesheet" href="../css/login.css">
 
 </head>
 
